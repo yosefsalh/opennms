@@ -2728,3 +2728,30 @@ CREATE TABLE user_defined_links (
 ALTER TABLE ONLY user_defined_links ADD CONSTRAINT user_defined_links_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY user_defined_links ADD CONSTRAINT fk_user_defined_links_node_id_a FOREIGN KEY (node_id_a) REFERENCES node(nodeid) ON DELETE CASCADE;
 ALTER TABLE ONLY user_defined_links ADD CONSTRAINT fk_user_defined_links_node_id_z FOREIGN KEY (node_id_z) REFERENCES node(nodeid) ON DELETE CASCADE;
+
+--##################################################################
+--# Website Monitoring
+--##################################################################
+CREATE TABLE sites (
+    id integer NOT NULL,
+    url TEXT NOT NULL,
+    interval integer NOT NULL,
+    CONSTRAINT sites_pkey PRIMARY KEY (id)
+);
+ALTER TABLE sites ADD CONSTRAINT sites_unique_url UNIQUE (url);
+
+CREATE TABLE site_results (
+    id integer NOT NULL,
+    datetime timestamp  NOT NULL,
+    response_code integer NOT NULL,
+    response_time integer NOT NULL,
+    error_message TEXT,
+    site_id integer NOT NULL,
+    CONSTRAINT sites_results_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_site_results_site_id FOREIGN KEY (site_id) REFERENCES sites (id) ON DELETE CASCADE
+);
+
+--# Sequence for the id column in sites table
+--#          sequence, column, table
+--# install: sitesnxtid id sites
+create sequence sitesnxtid minvalue 1;

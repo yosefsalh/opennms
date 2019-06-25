@@ -42,6 +42,8 @@ public interface Scheduler extends ScheduleTimer {
 	 * This method is used to schedule a ready runnable in the system. The
 	 * interval is used as the key for determining which queue to add the
 	 * runnable.
+	 *
+	 * @param interval in ms
 	 */
         @Override
 	public abstract void schedule(long interval, final ReadyRunnable runnable);
