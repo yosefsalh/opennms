@@ -742,7 +742,7 @@
     </dependency>
     <dependency>
       <groupId>org.opennms.features.url-monitoring</groupId>
-      <artifactId>org.opennms.features.url-monitoring.xxxx</artifactId>
+      <artifactId>org.opennms.features.url-monitoring.daemon</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

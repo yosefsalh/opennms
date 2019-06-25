@@ -12,7 +12,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>persistence</module>
-        <module>xxxx</module> <!-- TODO MVR name me -->
+        <module>daemon</module>
     </modules>
     <dependencies>
         <dependency>

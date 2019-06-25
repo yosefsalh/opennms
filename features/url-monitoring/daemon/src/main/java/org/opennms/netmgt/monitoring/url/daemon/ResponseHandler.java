@@ -26,9 +26,8 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.monitoring.url.xxxx;
+package org.opennms.netmgt.monitoring.url.daemon;
 
-import java.util.Date;
 import java.util.Objects;
 
 import org.opennms.netmgt.events.api.EventIpcManager;
@@ -59,7 +58,7 @@ class ResponseHandler {
 
     public void onError(final SiteConfig siteConfig, final int statusCode, final String errorMessage) {
         LOG.error("Received statusCode {} for {} with error message {}", statusCode, siteConfig.getUrl(), errorMessage == null ? "undefined" : errorMessage);
-        final Event event = new EventBuilder(UEI_INCORRECT_STATUS_CODE, UrlMonitoringService.class.getSimpleName(), new Date())
+        final Event event = new EventBuilder(UEI_INCORRECT_STATUS_CODE, UrlMonitord.NAME)
                 .addParam("monitorUrlStatusCode", statusCode)
                 .addParam("monitorUrlSite", siteConfig.getUrl())
                 .addParam("monitorUrlId", siteConfig.getId())

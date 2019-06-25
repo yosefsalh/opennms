@@ -26,7 +26,7 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.monitoring.url.xxxx;
+package org.opennms.netmgt.monitoring.url.daemon;
 
 import java.net.HttpURLConnection;
 import java.net.URL;

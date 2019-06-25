@@ -12,8 +12,6 @@
   <context:annotation-config />
   <tx:annotation-driven />
 
-<!--  <context:component-scan base-package="org.opennms.netmgt.monitoring.url" />-->
-
-  <bean id="x" class="org.opennms.netmgt.monitoring.url.xxxx.UrlMonitoringService" />
+  <bean id="daemon" class="org.opennms.netmgt.monitoring.url.daemon.UrlMonitord" />
 
 </beans>

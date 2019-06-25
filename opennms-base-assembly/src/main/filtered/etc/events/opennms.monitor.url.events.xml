@@ -2,7 +2,7 @@
     <event>
         <uei>uei.opennms.org/monitor/url/incorrectStatusCode</uei>
         <event-label>URL Service Monitoring: Incorrect HTTP Status Code</event-label>
-        <descr>&lt;p>An incorrect status code '%parm[monitorUrlStatusCode]%' was recieved for '%parm[monitorUrlSite]%'.
+        <descr>&lt;p>An incorrect status code '%parm[monitorUrlStatusCode]%' was received for '%parm[monitorUrlSite]%'.
             args(%parm[##]%): %parm[all]%&lt;/p></descr>
         <logmsg dest="logndisplay">Incorrect HTTP Status Code '%parm[monitorUrlStatusCode]%' for '%parm[monitorUrlSite]%'.
         </logmsg>

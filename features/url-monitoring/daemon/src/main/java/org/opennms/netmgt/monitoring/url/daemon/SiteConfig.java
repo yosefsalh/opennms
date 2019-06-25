@@ -26,7 +26,7 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.monitoring.url.xxxx;
+package org.opennms.netmgt.monitoring.url.daemon;
 
 import org.opennms.netmgt.monitoring.url.persistence.api.SiteEntity;
 

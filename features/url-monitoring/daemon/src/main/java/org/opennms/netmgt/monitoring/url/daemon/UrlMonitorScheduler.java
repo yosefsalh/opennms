@@ -26,7 +26,7 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.monitoring.url.xxxx;
+package org.opennms.netmgt.monitoring.url.daemon;
 
 public interface UrlMonitorScheduler {
     void schedule(SiteConfig siteConfig);

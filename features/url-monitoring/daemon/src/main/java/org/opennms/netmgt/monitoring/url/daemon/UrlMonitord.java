@@ -26,25 +26,30 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.monitoring.url.xxxx;
+package org.opennms.netmgt.monitoring.url.daemon;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import java.util.Objects;
 
+import org.opennms.netmgt.daemon.SpringServiceDaemon;
+import org.opennms.netmgt.events.api.EventConstants;
 import org.opennms.netmgt.events.api.EventIpcManager;
+import org.opennms.netmgt.events.api.annotations.EventHandler;
+import org.opennms.netmgt.events.api.annotations.EventListener;
 import org.opennms.netmgt.monitoring.url.persistence.api.SiteDao;
 import org.opennms.netmgt.monitoring.url.persistence.api.SiteEntity;
 import org.opennms.netmgt.scheduler.LegacyScheduler;
+import org.opennms.netmgt.xml.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
-@Service
-public class UrlMonitoringService implements UrlMonitorScheduler {
+@EventListener(name= UrlMonitord.NAME, logPrefix="urlmonitord")
+public class UrlMonitord implements SpringServiceDaemon, UrlMonitorScheduler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UrlMonitoringService.class);
+    public static final String NAME = "UrlMonitord";
+
+    private static final Logger LOG = LoggerFactory.getLogger(UrlMonitord.class);
 
     @Autowired
     private SiteDao siteDao;
@@ -55,19 +60,30 @@ public class UrlMonitoringService implements UrlMonitorScheduler {
 
     private final LegacyScheduler scheduler;
 
-    public UrlMonitoringService() {
+    public UrlMonitord() {
         this.scheduler = new LegacyScheduler("URL Monitor", 30); // TODO MVR make configurable
     }
 
-    @PostConstruct
-    public void onInit() {
-        siteDao.findAll().forEach(site -> schedule(site));
+
+    @EventHandler(uei = EventConstants.RELOAD_DAEMON_CONFIG_UEI)
+    public void handleReloadEvent(Event e) {
+        // TODO MVR --> LOG.warn("NOT IMPLEMENTED");
+    }
+
+    @Override
+    public void start() throws Exception {
         scheduler.start();
     }
 
-    @PreDestroy
-    public void onDestroy() {
+    @Override
+    public void destroy() throws Exception {
         scheduler.stop();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Objects.requireNonNull(scheduler);
+        siteDao.findAll().forEach(site -> schedule(site));
     }
 
     @Override

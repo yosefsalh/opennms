@@ -7,8 +7,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opennms.features.url-monitoring</groupId>
-    <artifactId>org.opennms.features.url-monitoring.xxxx</artifactId>
-    <name>OpenNMS :: Features :: URL Monitoring :: XXXX</name> <!-- TODO MVR naming -->
+    <artifactId>org.opennms.features.url-monitoring.daemon</artifactId>
+    <name>OpenNMS :: Features :: URL Monitoring :: daemon</name>
     <packaging>bundle</packaging>
     <build>
         <plugins>
