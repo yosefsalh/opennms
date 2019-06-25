@@ -11,8 +11,9 @@
     <name>OpenNMS :: Features :: URL Monitoring (Parent)</name>
     <packaging>pom</packaging>
     <modules>
-        <module>persistence</module>
         <module>daemon</module>
+        <module>persistence</module>
+        <module>rest</module>
     </modules>
     <dependencies>
         <dependency>

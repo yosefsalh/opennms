@@ -1412,6 +1412,12 @@
         <bundle>mvn:org.apache.httpcomponents/httpclient-osgi/4.5.3</bundle>
         <bundle>mvn:org.apache.httpcomponents/httpasyncclient-osgi/4.1.3</bundle>
     </feature>
+    <feature name="opennms-url-monitoring" version="${project.version}" description="OpenNMS :: Features :: URL Monitoring">
+        <details>Feature definition for URL Monitoring</details>
+        <!-- TODO MVR other dependencies are pulled in via custom.properties -->
+        <bundle>mvn:org.opennms.features.url-monitoring/org.opennms.features.url-monitoring.rest/${project.version}</bundle>
+    </feature>
+
     <feature name="ifttt-integration" version="${project.version}" description="OpenNMS :: Features :: IFTTT Integration">
         <details>OpenNMS is the world's first enterprise grade network management platform developed under the open source model. It consists of a community supported open-source project as well as a commercial services, training and support organization.</details>
         <feature>opennms-dao-api</feature>

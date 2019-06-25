@@ -47,7 +47,7 @@ import javax.persistence.TemporalType;
 public class SiteResultEntity {
 
     @Id
-    @SequenceGenerator(name = "sitesSequence", sequenceName = "sitesnxtid")
+    @SequenceGenerator(name = "sitesSequence", sequenceName = "sitenxtid")
     @GeneratedValue(generator = "sitesSequence")
     @Column(name="id", nullable = false)
     private Integer id; // TODO MVR should probably be an int

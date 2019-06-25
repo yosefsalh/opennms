@@ -48,7 +48,7 @@ import org.hibernate.annotations.BatchSize;
 public class SiteEntity {
 
     @Id
-    @SequenceGenerator(name = "sitesSequence", sequenceName = "sitesnxtid")
+    @SequenceGenerator(name = "sitesSequence", sequenceName = "sitenxtid")
     @GeneratedValue(generator = "sitesSequence")
     @Column(name="id", nullable = false)
     private Integer id; // TODO MVR should probably be a long

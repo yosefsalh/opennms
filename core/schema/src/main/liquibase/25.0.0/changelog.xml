@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd" >
+
+  <changeSet runOnChange="false" author="mvrueden" id="25.0.0-siteNxtId">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(relname) AS SEQUENCE_NAME FROM pg_class, pg_namespace
+        WHERE relkind='S' AND pg_class.relnamespace = pg_namespace.oid AND relname ILIKE 'sitenxtid'
+      </sqlCheck>
+    </preConditions>
+    <createSequence sequenceName="sitenxtid" />
+    <rollback>
+      <dropSequence sequenceName="sitenxtid" />
+    </rollback>
+  </changeSet>
+
+  <changeSet author="mvrueden" id="25.0.0-url-monitoring-tables">
+    <createTable tableName="sites">
+      <column name="id" type="integer"> <!-- TODO MVR this should be bigint -->
+        <constraints nullable="false"/>
+      </column>
+      <column name="url" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="interval" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="connect_timeout" type="integer"/> <!-- TODO MVR map and use -->
+      <column name="read_timeout" type="integer" /> <!-- TODO MVR map and use -->
+      <column name="retries" type="integer"/> <!-- TODO MVR map and use -->
+    </createTable>
+    <addPrimaryKey tableName="sites" columnNames="id" constraintName="sites_pkey" />
+    <addUniqueConstraint tableName="sites" columnNames="url" />
+
+    <createTable tableName="site_results">
+      <column name="id" type="integer"> <!-- TODO MVR this should be bigint -->
+        <constraints nullable="false"/>
+      </column>
+      <column name="datetime" type="TIMESTAMP"> <!-- TODO MVR with timezone?? -->
+        <constraints nullable="false"/>
+      </column>
+      <column name="response_code" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="response_time" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="error_message" type="text" />
+      <column name="site_id" type="integer">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="site_results" columnNames="id" constraintName="site_results_pkey" />
+    <addForeignKeyConstraint constraintName="fk_site_results_site_id"
+                             baseTableName="site_results" baseColumnNames="site_id"
+                             referencedTableName="sites" referencedColumnNames="id"
+                             onDelete="CASCADE"/>
+
+    <rollback>
+      <dropPrimaryKey tableName="sites" constraintName="sites_pkey" />
+      <dropUniqueConstraint tableName="sites" uniqueColumns="url" />
+
+      <dropPrimaryKey tableName="site_results" constraintName="site_results_pkey"/>
+      <dropForeignKeyConstraint baseTableName="site_results" constraintName="fk_site_results_site_id" />
+      <dropTable tableName="sites" />
+      <dropTable tableName="site_results" />
+    </rollback>
+  </changeSet>
+
+</databaseChangeLog>
