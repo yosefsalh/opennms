@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.support.TransactionOperations;
 
 @EventListener(name= UrlMonitord.NAME, logPrefix="urlmonitord")
 public class UrlMonitord implements SpringServiceDaemon, UrlMonitorScheduler {
@@ -58,12 +59,14 @@ public class UrlMonitord implements SpringServiceDaemon, UrlMonitorScheduler {
     @Qualifier("eventIpcManager")
     private EventIpcManager eventIpcManager;
 
+    @Autowired
+    private TransactionOperations transactionTemplate;
+
     private final LegacyScheduler scheduler;
 
     public UrlMonitord() {
         this.scheduler = new LegacyScheduler("URL Monitor", 30); // TODO MVR make configurable
     }
-
 
     @EventHandler(uei = EventConstants.RELOAD_DAEMON_CONFIG_UEI)
     public void handleReloadEvent(Event e) {
@@ -88,7 +91,7 @@ public class UrlMonitord implements SpringServiceDaemon, UrlMonitorScheduler {
 
     @Override
     public void schedule(SiteConfig siteConfig) {
-        scheduler.schedule(siteConfig.getInterval(), new UrlMonitoringRunnable(siteConfig, new ResponseHandler(eventIpcManager, this)));
+        scheduler.schedule(siteConfig.getInterval(), new UrlMonitoringRunnable(siteConfig, new ResponseHandler(eventIpcManager, this, siteDao, transactionTemplate)));
     }
 
     private void schedule(SiteEntity site) {

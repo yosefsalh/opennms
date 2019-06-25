@@ -54,17 +54,20 @@ class UrlMonitoringRunnable implements ReadyRunnable {
     @Override
     public void run() {
         try {
+            final long start = System.currentTimeMillis();
             final URL url = new URL(siteConfig.getUrl());
             final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(siteConfig.getConnectTimeout());
             connection.setReadTimeout(siteConfig.getReadTimeout());
             connection.setRequestMethod("GET"); // TODO MVR do we need to make this configurable as well?
             connection.connect();
-            int responseCode = connection.getResponseCode();
-            if (responseCode >= 200 && responseCode <= 299) {
-                responseHandler.onSuccess(siteConfig, responseCode);
+            final long responseTime = System.currentTimeMillis() - start;
+            final Response response = new Response(connection);
+            response.setResponseTime((int) responseTime);
+            if (response.isSuccess()) {
+                responseHandler.onSuccess(siteConfig, response);
             } else {
-                responseHandler.onError(siteConfig, responseCode, "TODO MVR");
+                responseHandler.onError(siteConfig, response);
             }
         } catch (Exception ex) {
             responseHandler.onException(siteConfig, ex);

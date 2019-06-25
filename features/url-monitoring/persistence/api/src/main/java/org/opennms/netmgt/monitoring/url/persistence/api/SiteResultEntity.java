@@ -28,48 +28,46 @@
 
 package org.opennms.netmgt.monitoring.url.persistence.api;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.BatchSize;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
-@Table(name="sites")
-public class SiteEntity {
+@Table(name="site_results")
+public class SiteResultEntity {
 
     @Id
     @SequenceGenerator(name = "sitesSequence", sequenceName = "sitesnxtid")
     @GeneratedValue(generator = "sitesSequence")
     @Column(name="id", nullable = false)
-    private Integer id; // TODO MVR should probably be a long
+    private Integer id; // TODO MVR should probably be an int
 
-    // TODO MVR should this be an URL ?
-    @Column(name="url", unique = true, nullable = false)
-    private String url;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="datetime", nullable = false)
+    private Date time;
 
-    // TODO MVR this should be long
-    // TODO MVR this should be configurable
-    @Column(name="interval", nullable=false)
-    private int interval = 5 * 60 * 1000; // Default is 5 Minutes
+    @Column(name="response_code", nullable = false)
+    private int responseCode;
 
-    @OneToMany(mappedBy="site", orphanRemoval=true)
-    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @BatchSize(size = 10)
-    private List<SiteResultEntity> results = new ArrayList<>();
+    @Column(name="response_time", nullable = false)
+    private int responseTime; // in ms
 
-    public SiteEntity() {
+    @Column(name="error_message")
+    private String errorMessage;
 
-    }
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name="site_id")
+    private SiteEntity site;
 
     public Integer getId() {
         return id;
@@ -79,37 +77,43 @@ public class SiteEntity {
         this.id = id;
     }
 
-    public String getUrl() {
-        return url;
+    public Date getTime() {
+        return time;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setTime(Date time) {
+        this.time = time;
     }
 
-    public int getInterval() {
-        return interval;
+    public int getResponseCode() {
+        return responseCode;
     }
 
-    public void setInterval(int interval) {
-        this.interval = interval;
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
     }
 
-    public void setInterval(int interval, TimeUnit unit) {
-        setInterval((int) TimeUnit.MILLISECONDS.convert(interval, unit));
+    public int getResponseTime() {
+        return responseTime;
     }
 
-    public void addResult(SiteResultEntity result) {
-        Objects.requireNonNull(result);
-        result.setSite(this);
-        results.add(result);
+    public void setResponseTime(int responseTime) {
+        this.responseTime = responseTime;
     }
 
-    public List<SiteResultEntity> getResults() {
-        return results;
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
-    public void setResults(List<SiteResultEntity> results) {
-        this.results = results;
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public SiteEntity getSite() {
+        return site;
+    }
+
+    public void setSite(SiteEntity site) {
+        this.site = site;
     }
 }

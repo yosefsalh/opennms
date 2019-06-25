@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
@@ -40,10 +41,12 @@ import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
 import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.netmgt.monitoring.url.persistence.api.SiteDao;
 import org.opennms.netmgt.monitoring.url.persistence.api.SiteEntity;
+import org.opennms.netmgt.monitoring.url.persistence.api.SiteResultEntity;
 import org.opennms.test.JUnitConfigurationEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionOperations;
 
 @RunWith(OpenNMSJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -55,13 +58,16 @@ import org.springframework.transaction.annotation.Transactional;
         "classpath:/META-INF/opennms/mockEventIpcManager.xml"})
 @JUnitConfigurationEnvironment
 @JUnitTemporaryDatabase
-@Transactional
 public class SiteDaoImplIT {
 
     @Autowired
     private SiteDao siteDao;
 
+    @Autowired
+    private TransactionOperations transactionTemplate;
+
     @Test
+    @Transactional
     public void verifyCRUD() {
         // Verify empty
         assertThat(siteDao.findAll(), hasSize(0));
@@ -71,7 +77,7 @@ public class SiteDaoImplIT {
         site.setInterval(1, TimeUnit.MINUTES);
 //        site.setReadTimeout(10);  // TODO MVR do we want to set this settings as well?
 //        site.setConnectTimeout(10); // TODO MVR do we want to set this settings as well?
-        site.setUrl("http://opennms.org");
+        site.setUrl("https://opennms.org");
 
         siteDao.save(site);
 
@@ -99,6 +105,54 @@ public class SiteDaoImplIT {
         // Delete
         siteDao.delete(persistedSite);
         assertThat(siteDao.findAll(), hasSize(0));
+    }
+
+    @Test
+    public void verifyAddResult() {
+        transactionTemplate.execute(status -> {
+            final SiteEntity site = new SiteEntity();
+            site.setInterval(5000);
+            site.setUrl("https://opennms.org");
+
+            final SiteResultEntity siteResult = new SiteResultEntity();
+            siteResult.setResponseCode(500);
+            siteResult.setTime(new Date());
+            siteResult.setErrorMessage("Nope");
+            siteResult.setResponseTime(250);
+            site.addResult(siteResult);
+
+            siteDao.save(site);
+            return null;
+        });
+
+        assertThat(siteDao.findAll(), hasSize(1));
+        assertThat(siteDao.findAll().get(0).getResults(), hasSize(1));
+
+        // Modify result
+        transactionTemplate.execute(status -> {
+            final SiteEntity site = siteDao.findAll().get(0);
+            site.getResults().remove(0);
+
+            final SiteResultEntity siteResult = new SiteResultEntity();
+            siteResult.setResponseCode(200);
+            siteResult.setTime(new Date());
+            siteResult.setResponseTime(125);
+            site.addResult(siteResult);
+
+            siteDao.save(site);
+            return null;
+        });
+
+        assertThat(siteDao.findAll(), hasSize(1));
+        assertThat(siteDao.findAll().get(0).getResults(), hasSize(1));
+
+        // Verify that the right response was removed
+        transactionTemplate.execute(status -> {
+            final SiteResultEntity entity = siteDao.get(0).getResults().get(0);
+            assertEquals(200, entity.getResponseCode());
+            assertEquals(125, entity.getResponseTime());
+            return null;
+        });
     }
 
 }

@@ -32,9 +32,13 @@ import java.util.Objects;
 
 import org.opennms.netmgt.events.api.EventIpcManager;
 import org.opennms.netmgt.model.events.EventBuilder;
+import org.opennms.netmgt.monitoring.url.persistence.api.SiteDao;
+import org.opennms.netmgt.monitoring.url.persistence.api.SiteEntity;
+import org.opennms.netmgt.monitoring.url.persistence.api.SiteResultEntity;
 import org.opennms.netmgt.xml.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.support.TransactionOperations;
 
 class ResponseHandler {
 
@@ -45,26 +49,39 @@ class ResponseHandler {
 
     private final EventIpcManager eventIpcManager;
     private final UrlMonitorScheduler scheduler;
+    private final SiteDao siteDao;
+    private final TransactionOperations transactionTemplate;
 
-    public ResponseHandler(final EventIpcManager eventIpcManager, final UrlMonitorScheduler scheduler) {
+    public ResponseHandler(final EventIpcManager eventIpcManager, final UrlMonitorScheduler scheduler, final SiteDao siteDao, final TransactionOperations transactionTemplate) {
         this.eventIpcManager = Objects.requireNonNull(eventIpcManager);
         this.scheduler = Objects.requireNonNull(scheduler);
+        this.siteDao = Objects.requireNonNull(siteDao);
+        this.transactionTemplate = Objects.requireNonNull(transactionTemplate);
     }
 
-    public void onSuccess(final SiteConfig siteConfig, final int statusCode) {
-        LOG.debug("Received statusCode {} for {}", statusCode, siteConfig.getUrl());
-        reschedule(siteConfig);
+    public void onSuccess(final SiteConfig siteConfig, final Response response) {
+        LOG.debug("Received statusCode {} for {}", response.getStatusCode(), siteConfig.getUrl());
+        try {
+            addResultAndPersist(siteConfig.getSiteId(), response);
+        } finally {
+            reschedule(siteConfig);
+        }
     }
 
-    public void onError(final SiteConfig siteConfig, final int statusCode, final String errorMessage) {
-        LOG.error("Received statusCode {} for {} with error message {}", statusCode, siteConfig.getUrl(), errorMessage == null ? "undefined" : errorMessage);
-        final Event event = new EventBuilder(UEI_INCORRECT_STATUS_CODE, UrlMonitord.NAME)
-                .addParam("monitorUrlStatusCode", statusCode)
-                .addParam("monitorUrlSite", siteConfig.getUrl())
-                .addParam("monitorUrlId", siteConfig.getId())
-                .getEvent();
-        eventIpcManager.sendNow(event);
-        reschedule(siteConfig);
+    public void onError(final SiteConfig siteConfig, final Response response) {
+        LOG.error("Received statusCode {} for {} with error message {}", response.getStatusCode(), siteConfig.getUrl(), response.getErrorMessage() == null ? "undefined" : response.getErrorMessage());
+        try {
+            addResultAndPersist(siteConfig.getSiteId(), response);
+
+            final Event event = new EventBuilder(UEI_INCORRECT_STATUS_CODE, UrlMonitord.NAME)
+                    .addParam("monitorUrlStatusCode", response.getStatusCode())
+                    .addParam("monitorUrlSite", siteConfig.getUrl())
+                    .addParam("monitorUrlId", siteConfig.getSiteId())
+                    .getEvent();
+            eventIpcManager.sendNow(event);
+        } finally {
+            reschedule(siteConfig);
+        }
     }
 
     public void onException(final SiteConfig siteConfig, final Exception ex) {
@@ -74,5 +91,23 @@ class ResponseHandler {
 
     public void reschedule(final SiteConfig siteConfig) {
         scheduler.schedule(siteConfig);
+    }
+
+    private void addResultAndPersist(final int siteId, final Response response) {
+        transactionTemplate.execute(status -> {
+            final SiteEntity siteEntity = siteDao.get(siteId);
+
+            final SiteResultEntity resultEntity = new SiteResultEntity();
+            resultEntity.setResponseCode(response.getStatusCode());
+            resultEntity.setResponseTime(response.getResponseTime());
+            if (response.isSuccess()) {
+//            resultEntity.setMessage(response.getResponseMessage()); // TODO MVR
+            } else {
+                resultEntity.setErrorMessage(response.getErrorMessage());
+            }
+            siteEntity.addResult(resultEntity);
+            siteDao.saveOrUpdate(siteEntity);
+            return null;
+        });
     }
 }

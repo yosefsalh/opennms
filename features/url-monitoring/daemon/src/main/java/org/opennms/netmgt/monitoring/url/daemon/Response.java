@@ -28,63 +28,54 @@
 
 package org.opennms.netmgt.monitoring.url.daemon;
 
-import org.opennms.netmgt.monitoring.url.persistence.api.SiteEntity;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 
-public class SiteConfig {
+public class Response {
 
-    private int connectTimeout = 5000; // TODO MVR make configurable
-    private int readTimeout = 10000; // TODO MVR make configurable
-    private String url;
-    private long interval;
-    private int siteId;
+    private int statusCode;
+    private int responseTime;
+    private String responseMessage;
+    private String errorMessage;
 
-    public SiteConfig() {
-
+    public Response(HttpURLConnection connection) throws IOException {
+        statusCode = connection.getResponseCode();
+        responseMessage = isSuccess() ? connection.getResponseMessage() : null;
+        errorMessage = isSuccess() ? null : connection.getResponseMessage();
+    }
+    public boolean isSuccess() {
+        return statusCode >= 200 && statusCode <= 299;
     }
 
-    public SiteConfig(SiteEntity entity) {
-        setUrl(entity.getUrl());
-        setInterval(entity.getInterval());
-        setSiteId(entity.getId());
+    public int getStatusCode() {
+        return statusCode;
     }
 
-    public long getInterval() {
-        return interval;
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
     }
 
-    public void setInterval(long interval) {
-        this.interval = interval;
+    public int getResponseTime() {
+        return responseTime;
     }
 
-    public int getConnectTimeout() {
-        return connectTimeout;
+    public void setResponseTime(int responseTime) {
+        this.responseTime = responseTime;
     }
 
-    public void setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
+    public String getResponseMessage() {
+        return responseMessage;
     }
 
-    public int getReadTimeout() {
-        return readTimeout;
+    public void setResponseMessage(String responseMessage) {
+        this.responseMessage = responseMessage;
     }
 
-    public void setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public int getSiteId() {
-        return siteId;
-    }
-
-    public void setSiteId(int siteId) {
-        this.siteId = siteId;
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }
