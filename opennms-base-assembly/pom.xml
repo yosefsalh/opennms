@@ -726,7 +726,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opennms.features.url-monitoring</groupId>
+      <groupId>org.opennms.features.url-monitoring.persistence</groupId>
       <artifactId>org.opennms.features.url-monitoring.persistence.impl</artifactId>
       <version>${project.version}</version>
     </dependency>

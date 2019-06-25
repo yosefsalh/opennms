@@ -56,7 +56,7 @@ public class UrlMonitoringService implements UrlMonitorScheduler {
     private final LegacyScheduler scheduler;
 
     public UrlMonitoringService() {
-        this.scheduler = new LegacyScheduler("URL Monitor", Integer.getInteger("org.opennms.netmgt.monitor.url.threads", 30) /* TODO MVR really as system property? */);
+        this.scheduler = new LegacyScheduler("URL Monitor", 30); // TODO MVR make configurable
     }
 
     @PostConstruct
