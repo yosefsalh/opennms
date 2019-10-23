@@ -28,13 +28,38 @@
 
 package org.opennms.smoketest.env;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Objects;
+import java.util.Properties;
+
 import org.opennms.smoketest.utils.RestClient;
 
-public interface OpennmsEnvironment {
+public class OpennmsEnvironment {
 
-    String getBaseUrlInternal();
+    private final Properties properties;
 
-    String getBaseUrlExternal();
+    public OpennmsEnvironment(Properties properties) {
+        this.properties = Objects.requireNonNull(properties);
+    }
 
-    RestClient getRestClient();
+    public URL getBaseUrlInternal() {
+        try {
+            return new URL(String.format("http://%s:%s/", properties.getProperty("opennms.host.internal"), properties.getProperty("opennms.port.web")));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public URL getBaseUrlExternal() {
+        try {
+            return new URL(String.format("http://%s:%s/", properties.getProperty("opennms.host.external"), properties.getProperty("opennms.port.web")));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public RestClient getRestClient() {
+        return new RestClient(getBaseUrlExternal());
+    }
 }

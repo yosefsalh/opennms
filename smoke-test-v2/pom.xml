@@ -19,6 +19,12 @@
     <test.fork.count>1</test.fork.count>
     <!-- Limit ITs to 30 minutes by default -->
     <test.fork.timeout>1800</test.fork.timeout>
+
+    <!-- Environment Settings -->
+    <env.opennms.host.internal>opennms</env.opennms.host.internal>
+    <env.opennms.host.external>localhost</env.opennms.host.external>
+    <env.opennms.port.web>8980</env.opennms.port.web>
+    <env.opennms.port.ssh>8101</env.opennms.port.ssh>
   </properties>
   <build>
     <testResources>

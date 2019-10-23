@@ -30,18 +30,13 @@ package org.opennms.smoketest.ui;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermissions;
 
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.opennms.smoketest.env.MinimalEnvironment;
-import org.opennms.smoketest.env.OpennmsEnvironment;
-import org.opennms.smoketest.env.PostgresEnvironment;
 import org.opennms.smoketest.selenium.AbstractOpenNMSSeleniumHelper;
-import org.opennms.smoketest.utils.RestClient;
 import org.opennms.smoketest.utils.TestContainerUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -106,41 +101,7 @@ public class OpenNMSSeleniumIT extends AbstractOpenNMSSeleniumHelper {
     }
 
     protected static MinimalEnvironment getEnvironment() {
-        return new MinimalEnvironment() {
-
-            @Override
-            public OpennmsEnvironment opennms() {
-                return new OpennmsEnvironment() {
-
-                    public String getBaseUrlInternal() {
-                        return "http://opennms:8980"; // TODO MVR
-                    }
-
-                    public String getBaseUrlExternal() {
-                        try {
-                            return new URL(String.format("http://%s:%d/", "192.168.1.16", 8980)).toString();
-                        } catch (MalformedURLException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-
-                    @Override
-                    public RestClient getRestClient() {
-                        try {
-                            return new RestClient(new URL(String.format("http://%s:%d/", "192.168.1.16", 8980)));
-                        } catch (MalformedURLException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                };
-            }
-
-            @Override
-            public PostgresEnvironment postgres() {
-                return new PostgresEnvironment() {
-                };
-            }
-        };
+        return new MinimalEnvironment();
     }
 
     public static RemoteWebDriver driver;
@@ -160,12 +121,12 @@ public class OpenNMSSeleniumIT extends AbstractOpenNMSSeleniumHelper {
 
     @Override
     public String getBaseUrlInternal() {
-        return environment.opennms().getBaseUrlInternal();
+        return environment.opennms().getBaseUrlInternal().toString();
     }
 
     @Override
     public String getBaseUrlExternal() {
-        return environment.opennms().getBaseUrlExternal();
+        return environment.opennms().getBaseUrlExternal().toString();
     }
 
 }

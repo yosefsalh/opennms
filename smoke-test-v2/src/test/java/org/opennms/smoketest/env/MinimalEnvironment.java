@@ -28,7 +28,43 @@
 
 package org.opennms.smoketest.env;
 
-public interface MinimalEnvironment {
-    OpennmsEnvironment opennms();
-    PostgresEnvironment postgres();
+import java.io.IOException;
+import java.util.Properties;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
+
+public class MinimalEnvironment {
+
+    private final Properties properties;
+
+    public MinimalEnvironment() {
+        this(new ClassPathResource("/ui-tests/test.properties"));
+    }
+
+    public MinimalEnvironment(final Resource resource) {
+        try {
+            this.properties = PropertiesLoaderUtils.loadProperties(resource);
+            properties.keySet().stream()
+                    .map(key -> (String) key)
+                    .forEach(key -> {
+                        // Overwrite value if it exists
+                        final String sytsemProperty = System.getProperty(key);
+                        if (sytsemProperty != null && !"".equals(sytsemProperty)) {
+                            properties.put(key,sytsemProperty);
+                        }
+                    });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public OpennmsEnvironment opennms() {
+        return new OpennmsEnvironment(properties);
+    }
+
+    public PostgresEnvironment postgres() {
+        return new PostgresEnvironment() {};
+    }
 }
