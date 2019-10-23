@@ -89,7 +89,7 @@ commands:
           command: |
             docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
   run-smoke-tests-v2:
-    description: "Run the (new) smoke tests \o/"
+    description: "Run the (new) smoke tests \\o/"
     steps:
       - run:
           name: Load Horizon OCI image
