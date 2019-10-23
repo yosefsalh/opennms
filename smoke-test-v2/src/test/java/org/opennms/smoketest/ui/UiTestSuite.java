@@ -116,7 +116,7 @@ public class UiTestSuite {
                 return new OpennmsEnvironment() {
 
                     public String getBaseUrlInternal() {
-                        return getBaseUrlExternal(); // TODO MVR?!
+                        return "http://opennms:8980"; // TODO MVR
                     }
 
                     public String getBaseUrlExternal() {
