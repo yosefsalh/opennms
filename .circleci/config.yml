@@ -88,6 +88,56 @@ commands:
           name: Login to DockerHub
           command: |
             docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
+  run-smoke-tests-v2:
+    description: "Run the (new) smoke tests \o/"
+    steps:
+      - run:
+          name: Load Horizon OCI image
+          command: |
+            cd opennms-container/horizon
+            docker image load -i images/container.oci
+      - run:
+          name: Start environment
+          command: |
+            cd smoke-test-v2/src/test/resources/ui-tests
+            docker-compose up -d
+            # wait 60 seconds for now, but should wait until all services are healthy
+            sleep 60
+      - run:
+          name: Smoke Tests
+          no_output_timeout: 30m
+          command: |
+            .circleci/scripts/smoke-v2.sh
+      - run:
+          name: Gather system logs
+          when: always
+          command: |
+            mkdir -p ~/test-results/system-logs
+            dmesg > ~/test-results/system-logs/dmesg
+            ps auxf > ~/test-results/system-logs/ps
+            free -m > ~/test-results/system-logs/free
+            docker stats --no-stream > ~/test-results/system-logs/docker_stats
+      - run:
+          name: Gather test artifacts
+          when: always
+          command: |
+            mkdir -p ~/test-results/junit
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+            find . -type f -regex ".*/target/failsafe-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+            mkdir -p ~/test-artifacts/recordings
+            cp -R ~/project/smoke-test-v2/target/*.flv ~/test-artifacts/recordings || true
+            cp -R ~/project/smoke-test-v2/target/screenshots ~/test-artifacts/ || true
+            cp -R ~/project/smoke-test-v2/target/logs ~/test-artifacts/ || true
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          when: always
+          path: ~/test-results
+          destination: test-results
+      - store_artifacts:
+          when: always
+          path: ~/test-artifacts
+          destination: test-artifacts
   run-smoke-tests:
     description: "Run the smoke tests"
     parameters:
@@ -178,6 +228,10 @@ commands:
             # to maintain another cache
           command: |
             cd smoke-test && mvn install -DskipTests=true -DskipITs=true
+      - run:
+          name: Compile (new) smoke tests
+          command: |
+            cd smoke-test-v2 && mvn clean install -DskipTests=true -DskipITs=true
       - save-maven-cache
       - save-nodejs-cache
       - persist_to_workspace:
