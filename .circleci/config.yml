@@ -338,8 +338,8 @@ workflows:
       - smoke-test-full:
           requires:
             - horizon-package-build
-            - minion-package-build
-            - sentinel-package-build
+#            - minion-package-build
+#            - sentinel-package-build
           filters:
             branches:
               only:
@@ -349,11 +349,12 @@ workflows:
                 - /^foundation.*/
                 - /^features.*/
                 - /.*smoke.*/
+                - /^mvr.*/
       - smoke-test-minimal:
           requires:
             - horizon-package-build
-            - minion-package-build
-            - sentinel-package-build
+#            - minion-package-build
+#            - sentinel-package-build
           filters:
             branches:
               ignore:
@@ -363,6 +364,7 @@ workflows:
                 - /^foundation.*/
                 - /^features.*/
                 - /.*smoke.*/
+                - /^mvr.*/
       - horizon-publish-oci:
           requires:
             - horizon-package-build
@@ -371,22 +373,22 @@ workflows:
               only:
                 - master
                 - develop
-      - minion-publish-oci:
-          requires:
-            - minion-package-build
-          filters:
-            branches:
-              only:
-                - master
-                - develop
-      - sentinel-publish-oci:
-          requires:
-            - sentinel-package-build
-          filters:
-            branches:
-              only:
-                - master
-                - develop
+#      - minion-publish-oci:
+#          requires:
+#            - minion-package-build
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - develop
+#      - sentinel-publish-oci:
+#          requires:
+#            - sentinel-package-build
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - develop
 
 jobs:
   build:
@@ -579,12 +581,11 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
-      - run-smoke-tests
+      - run-smoke-tests-v2
   smoke-test-minimal:
     executor: smoke-test-executor
     steps:
       - attach_workspace:
           at: ~/
-      - run-smoke-tests:
-          minimal: true
+      - run-smoke-tests-v2
 
