@@ -43,6 +43,7 @@ public class OpennmsEnvironment {
         this.properties = Objects.requireNonNull(properties);
     }
 
+    // TODO MVR do we need to distinguish between internal and external?
     public URL getBaseUrlInternal() {
         try {
             return new URL(String.format("http://%s:%s/", properties.getProperty("opennms.host.internal"), properties.getProperty("opennms.port.web")));
@@ -51,6 +52,7 @@ public class OpennmsEnvironment {
         }
     }
 
+    // TODO MVR do we need to distinguish between internal and external?
     public URL getBaseUrlExternal() {
         try {
             return new URL(String.format("http://%s:%s/", properties.getProperty("opennms.host.external"), properties.getProperty("opennms.port.web")));
