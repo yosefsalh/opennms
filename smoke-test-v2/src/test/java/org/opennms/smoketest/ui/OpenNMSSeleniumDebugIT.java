@@ -28,49 +28,41 @@
 
 package org.opennms.smoketest.ui;
 
-import org.junit.BeforeClass;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.ClassRule;
-import org.opennms.smoketest.env.MinimalEnvironment;
-import org.opennms.smoketest.selenium.AbstractOpenNMSSeleniumHelper;
-import org.opennms.smoketest.utils.WebDriverAccessor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.opennms.smoketest.containers.FirefoxWebdriverContainer;
 
 /**
- * Base class for Selenium based testing of the OpenNMS web application.
+ * This class is used to help debug and develop Selenium based tests.
+ *
+ * To use it, run the main() method in one session, and update your test to
+ * extend this class temporarily.
+ *
+ * In order to test against a local environment (one that is already setup on the host running the tests)
+ * use the constructor that only specific the web driver URL.
+ *
+ * In order to test against an existing environments created in the containers, set both the
+ * web driver URL and the web URL.
+ *
+ * @author jwhite
  */
-public class OpenNMSSeleniumIT extends AbstractOpenNMSSeleniumHelper {
+// TODO MVR rework javadoc
+public class OpenNMSSeleniumDebugIT {
 
     @ClassRule
-    public static WebDriverAccessor rule = new WebDriverAccessor("http://localhost:32848/wd/hub");
+    public static FirefoxWebdriverContainer firefox = new FirefoxWebdriverContainer();
 
-    protected static MinimalEnvironment getEnvironment() {
-        return new MinimalEnvironment();
+    @Test
+    public void canDebug() throws InterruptedException {
+        System.out.printf("\n\nWeb driver is available at: %s\n", firefox.getSeleniumAddress());
+        System.out.printf("VNC port is available at: %s\n", firefox.getVncAddress());
+        Thread.sleep(TimeUnit.HOURS.toMillis(8));
     }
 
-    public static RemoteWebDriver driver;
-
-    public static MinimalEnvironment environment;
-
-    @BeforeClass
-    public static void setUpClass() {
-        driver = rule.getWebDriver();
-        environment = getEnvironment();
+    public static void main(String... args) {
+        JUnitCore.runClasses(OpenNMSSeleniumDebugIT.class);
     }
-
-    @Override
-    public WebDriver getDriver() {
-        return driver;
-    }
-
-    @Override
-    public String getBaseUrlInternal() {
-        return environment.opennms().getBaseUrlInternal().toString();
-    }
-
-    @Override
-    public String getBaseUrlExternal() {
-        return environment.opennms().getBaseUrlExternal().toString();
-    }
-
 }
