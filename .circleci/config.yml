@@ -326,15 +326,15 @@ workflows:
       - horizon-package-build:
           requires:
             - build
-      - minion-package-build:
-          requires:
-            - build
-      - sentinel-package-build:
-          requires:
-            - build
-      - integration-test:
-          requires:
-            - build
+#      - minion-package-build:
+#          requires:
+#            - build
+#      - sentinel-package-build:
+#          requires:
+#            - build
+#      - integration-test:
+#          requires:
+#            - build
       - smoke-test-full:
           requires:
             - horizon-package-build
