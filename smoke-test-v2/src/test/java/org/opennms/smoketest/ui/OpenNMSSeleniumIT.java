@@ -42,7 +42,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public class OpenNMSSeleniumIT extends AbstractOpenNMSSeleniumHelper {
 
     @ClassRule
-    public static WebDriverAccessor rule = new WebDriverAccessor("http://localhost:32848/wd/hub");
+    public static WebDriverAccessor rule = new WebDriverAccessor();
 
     protected static MinimalEnvironment getEnvironment() {
         return new MinimalEnvironment();
