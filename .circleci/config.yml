@@ -101,8 +101,6 @@ commands:
           command: |
             cd smoke-test-v2/src/test/resources/ui-tests
             docker-compose up -d
-            # wait 60 seconds for now, but should wait until all services are healthy
-            sleep 60
       - run:
           name: Smoke Tests
           no_output_timeout: 30m

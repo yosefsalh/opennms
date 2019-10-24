@@ -47,3 +47,9 @@ services:
       - "8001:8001"
       - "61616:61616"
       - "162:162/udp"
+
+  dummy:
+    image: hello-world
+    depends_on:
+        opennms:
+          condition: service_healthy
