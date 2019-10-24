@@ -68,7 +68,8 @@ public class WebDriverAccessor implements TestRule {
     public Statement apply(Statement base, Description description) {
         // If no webdriverUrl is provided, a new one is started
         if (webdriverUrl == null) {
-            firefox = new FirefoxWebdriverContainer();
+            firefox = new FirefoxWebdriverContainer()
+                    .withLinkToContainer(() -> "opennms", "opennms"); // Allow connection to opennms container
             return firefox.apply(base, description);
         }
         // Otherwise just continue without starting a container
