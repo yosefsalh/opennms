@@ -47,14 +47,14 @@ public class MinimalEnvironment {
         try {
             this.properties = PropertiesLoaderUtils.loadProperties(resource);
             properties.keySet().stream()
-                    .map(key -> (String) key)
-                    .forEach(key -> {
-                        // Overwrite value if it exists
-                        final String sytsemProperty = System.getProperty(key);
-                        if (sytsemProperty != null && !"".equals(sytsemProperty)) {
-                            properties.put(key,sytsemProperty);
-                        }
-                    });
+                .map(key -> (String) key)
+                .forEach(key -> {
+                    // Overwrite value if it exists
+                    final String systemProperty = System.getProperty(key);
+                    if (systemProperty != null && !"".equals(systemProperty)) {
+                        properties.put(key,systemProperty);
+                    }
+                });
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
