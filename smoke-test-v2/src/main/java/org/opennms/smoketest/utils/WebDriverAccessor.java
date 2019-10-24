@@ -30,6 +30,7 @@ package org.opennms.smoketest.utils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import org.junit.rules.TestRule;
@@ -37,7 +38,11 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.opennms.smoketest.containers.FirefoxWebdriverContainer;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.BrowserWebDriverContainer;
+
+import com.github.dockerjava.api.model.Network;
+import com.google.common.base.Strings;
 
 /**
  * Helper to access the underlying {@link RemoteWebDriver}.
@@ -68,8 +73,28 @@ public class WebDriverAccessor implements TestRule {
     public Statement apply(Statement base, Description description) {
         // If no webdriverUrl is provided, a new one is started
         if (webdriverUrl == null) {
-            firefox = new FirefoxWebdriverContainer()
-                    .withLinkToContainer(() -> "opennms", "opennms"); // Allow connection to opennms container
+            firefox = new FirefoxWebdriverContainer();
+
+            // Ensure the containers can talk to each other
+            final String networkName = System.getProperty("docker.bridge.name");
+            if (!Strings.isNullOrEmpty(networkName)) {
+                final Network network = DockerClientFactory.instance().client().listNetworksCmd().withNameFilter(networkName).exec()
+                        .stream().findAny()
+                        .orElseThrow(() -> new NoSuchElementException("No network bridge with name '" + networkName + "' was found"));
+                firefox.withNetwork(new org.testcontainers.containers.Network() {
+                    @Override
+                    public Statement apply(Statement base, Description description) {
+                        return base; // TODO MVR not so sure about this :D
+                    }
+                    @Override
+                    public String getId() {
+                        return network.getId();
+                    }
+                    @Override
+                    public void close() {
+                    }
+                });
+            }
             return firefox.apply(base, description);
         }
         // Otherwise just continue without starting a container

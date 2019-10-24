@@ -21,6 +21,7 @@
     <test.fork.timeout>1800</test.fork.timeout>
 
     <!-- Environment Settings -->
+    <env.docker.bridge.name>ui-tests_opennms-net</env.docker.bridge.name>
     <env.opennms.host.internal>opennms</env.opennms.host.internal>
     <env.opennms.host.external>localhost</env.opennms.host.external>
     <env.opennms.port.web>8980</env.opennms.port.web>

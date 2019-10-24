@@ -1,17 +1,17 @@
 version: '2.1'
 
 networks:
-  opennms.net:
+  opennms-net:
     driver: bridge
 
 services:
   database:
-    container_name: opennms.psql
+    container_name: opennms-psql
     image: postgres:10
     env_file:
       - env.postgres
     networks:
-      - opennms.net
+      - opennms-net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 30s
@@ -21,7 +21,7 @@ services:
       - "5432:5432"
 
   opennms:
-    container_name: opennms.hzn.core.web
+    container_name: opennms-horizon
     image: horizon:latest
 #    image: opennms/horizon-core-web:bleeding
 #    init: true
@@ -29,7 +29,7 @@ services:
       - env.opennms
       - env.postgres
     networks:
-      - opennms.net
+      - opennms-net
     depends_on:
       database:
         condition: service_healthy
@@ -48,8 +48,12 @@ services:
       - "61616:61616"
       - "162:162/udp"
 
+  # This is a dummy service which depends on opennms to have the docker-compose up -d command to wait
+  # until opennms is healthy \o/
   dummy:
     image: hello-world
+    networks:
+      - opennms-net
     depends_on:
         opennms:
           condition: service_healthy
