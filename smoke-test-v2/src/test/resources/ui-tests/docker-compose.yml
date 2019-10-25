@@ -40,7 +40,7 @@ services:
       test: ["CMD", "curl", "-f", "-I", "http://localhost:8980/opennms/login.jsp"]
       interval: 1m
       timeout: 5s
-      retries: 3
+      retries: 5
     ports:
       - "8980:8980"
       - "8101:8101"
