@@ -37,6 +37,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.opennms.smoketest.containers.FirefoxWebdriverContainer;
+import org.opennms.smoketest.env.MinimalEnvironment;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.BrowserWebDriverContainer;
@@ -52,6 +53,8 @@ import com.google.common.base.Strings;
  *
  */
 public class WebDriverAccessor implements TestRule {
+
+    private final MinimalEnvironment env = new MinimalEnvironment();
 
     private URL webdriverUrl;
 
@@ -76,7 +79,7 @@ public class WebDriverAccessor implements TestRule {
             firefox = new FirefoxWebdriverContainer();
 
             // Ensure the containers can talk to each other
-            final String networkName = System.getProperty("docker.bridge.name");
+            final String networkName = env.getDockerBridgeName();
             if (!Strings.isNullOrEmpty(networkName)) {
                 final Network network = DockerClientFactory.instance().client().listNetworksCmd().withNameFilter(networkName).exec()
                         .stream().findAny()

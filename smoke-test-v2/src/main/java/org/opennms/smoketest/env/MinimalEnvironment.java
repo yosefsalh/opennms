@@ -60,6 +60,10 @@ public class MinimalEnvironment {
         }
     }
 
+    public String getDockerBridgeName() {
+        return properties.getProperty("docker.bridge.name");
+    }
+
     public OpennmsEnvironment opennms() {
         return new OpennmsEnvironment(properties);
     }
