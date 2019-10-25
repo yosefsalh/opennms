@@ -23,5 +23,5 @@ find_tests
 for TEST_CLASS in $(cat /tmp/this_node_it_tests)
 do
   echo "###### Testing: ${TEST_CLASS}"
-  mvn -N -DskipTests=false -DskipITs=false -DfailIfNoTests=false -Dit.test=$TEST_CLASS install verify
+  mvn -N -DskipTests=false -DskipITs=false -DfailIfNoTests=false -Dit.test=$TEST_CLASS -Ddocker.bridge.name=uitests_opennms-net install verify
 done
