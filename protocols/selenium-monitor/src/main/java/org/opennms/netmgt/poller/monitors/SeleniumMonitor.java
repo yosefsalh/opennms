@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,6 +49,7 @@ import org.opennms.netmgt.poller.PollStatus;
 import org.opennms.netmgt.poller.support.AbstractServiceMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.opennms.core.logging.Logging;
 
 import org.openqa.selenium.remote.SessionNotFoundException;
 
@@ -86,8 +88,19 @@ public class SeleniumMonitor extends AbstractServiceMonitor {
 				responseTimes.put(PollStatus.PROPERTY_RESPONSE_TIME, Double.NaN);
 
 				tracker.startAttempt();
-				Result result = runTest(getBaseUrl(parameters, svc), getTimeout(parameters),
-						createGroovyClass(seleniumTestFilename));
+
+				Class<?> groovyclass = createGroovyClass(seleniumTestFilename);
+
+				// this makes logs in groovy scripts visable in selenium_groovey log
+				Result result = Logging.withPrefix("selenium_groovey", new Callable<Result>() {
+
+					@Override
+					public Result call() throws Exception {
+						return runTest(getBaseUrl(parameters, svc), getTimeout(parameters), groovyclass);
+					}
+					
+				});
+
 				double responseTime = tracker.elapsedTimeInMillis();
 				responseTimes.put(PollStatus.PROPERTY_RESPONSE_TIME, responseTime);
 
@@ -163,7 +176,7 @@ public class SeleniumMonitor extends AbstractServiceMonitor {
 		}
 		String reason = "Selenium sequence failed:  " + stringBuilder.toString();
 		SeleniumMonitor.LOG.debug(reason);
-		
+
 		if (SeleniumMonitor.LOG.isTraceEnabled()) {
 			final StringBuilder traceStringBuilder = new StringBuilder();
 			for (Failure failure : result.getFailures()) {
