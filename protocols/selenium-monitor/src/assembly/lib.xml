@@ -20,14 +20,18 @@
 				<include>com.google.code.gson:gson</include>
 				<include>junit:junit</include>
 
-				<!-- junit dependency needed in lib -->
+				<!-- junit hamcrest dependency needed in lib -->
 				<include>org.hamcrest:hamcrest-library</include>
+				<include>org.hamcrest:hamcrest-core</include>
 
-				<!-- browsermob dependencies -->
+				<!-- browsermob dependencies in lib -->
 				<include>net.lightbody.bmp:browsermob-core</include>
 				<include>net.lightbody.bmp:mitm</include>
 				<include>net.lightbody.bmp:littleproxy</include>
 				<include>com.jcraft:jzlib</include>
+
+                <!-- jslt dependency in lib -->
+				<include>com.schibsted.spt.data:jslt</include>
 
 			</includes>
 			<fileMode>0644</fileMode>
