@@ -153,8 +153,11 @@ class OpennmsSeleniumExampleHar2 {
 			LOG.debug("testSelenium() setting up browsermob proxy");
 			// start the proxy
 			proxy = new BrowserMobProxyServer();
-			proxy.setHarCaptureTypes(CaptureType.REQUEST_HEADERS, CaptureType.RESPONSE_HEADERS);
-
+			proxy.setHarCaptureTypes(CaptureType.REQUEST_HEADERS, 
+					CaptureType.RESPONSE_HEADERS, 
+					CaptureType.RESPONSE_BINARY_CONTENT,  
+					CaptureType.RESPONSE_CONTENT);
+			proxy.setTrustAllServers(true); //note might be better to use cert authorities
 			proxy.start(0);
 			LOG.debug("testSelenium()  BrowserMobProxyServer started: ");
 
@@ -162,31 +165,28 @@ class OpennmsSeleniumExampleHar2 {
 			Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
 
 			FirefoxBinary firefoxBinary = new FirefoxBinary();
-			LOG.debug("testSelenium() HEADLESS");
 			firefoxBinary.addCommandLineOptions("--headless");
-
-			LOG.debug("testSelenium() BMP PROXY");
 
 			FirefoxOptions firefoxOptions = new FirefoxOptions();
 			// set up proxy
 			firefoxOptions.setCapability(CapabilityType.PROXY, seleniumProxy);
 			firefoxOptions.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
-
-			LOG.debug("testSelenium() FIREFOX BINARY LOG LEVEL TRACE");
 			firefoxOptions.setBinary(firefoxBinary);
-			firefoxOptions.setLogLevel(FirefoxDriverLogLevel.TRACE);
+			firefoxOptions.setLogLevel(FirefoxDriverLogLevel.INFO);
 
+			int implicitlyWait = timeout - 10000; 
+			LOG.debug("testSelenium()  create driver: pageloadtimeout ms = "+ timeout+ " implicitlyWait ms= "+implicitlyWait);
 			driver = new FirefoxDriver(firefoxOptions);
-
-			driver.manage().timeouts().implicitlyWait(timeout, TimeUnit.SECONDS);
+			driver.manage().deleteAllCookies();
+			driver.manage().timeouts().pageLoadTimeout(timeout, TimeUnit.MILLISECONDS);
+			driver.manage().timeouts().implicitlyWait(implicitlyWait, TimeUnit.MILLISECONDS);
 
 			LOG.debug("setUp() driver started");
 
-			LOG.debug("testSelenium() CREATE NEW HAR NAME=" + baseUrl);
+			LOG.debug("testSelenium() create har name=" + baseUrl);
 			proxy.newHar(baseUrl);
 
 			LOG.debug("testSelenium() driver get base url=" + baseUrl);
-
 			driver.get(baseUrl);
 
 			LOG.debug("testSelenium() finished getting base url");
