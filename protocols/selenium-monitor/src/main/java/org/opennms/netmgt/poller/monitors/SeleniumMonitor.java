@@ -91,8 +91,8 @@ public class SeleniumMonitor extends AbstractServiceMonitor {
 
 				Class<?> groovyclass = createGroovyClass(seleniumTestFilename);
 
-				// this makes logs in groovy scripts visable in selenium_groovey log
-				Result result = Logging.withPrefix("selenium_groovey", new Callable<Result>() {
+				// this makes logs in groovy scripts visable in selenium_groovy log
+				Result result = Logging.withPrefix("selenium_groovy", new Callable<Result>() {
 
 					@Override
 					public Result call() throws Exception {
