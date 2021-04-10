@@ -28,16 +28,18 @@
 
 package selenium.test.groovy;
 
-import static org.junit.Assert.*
+import static org.junit.Assert.*;
 
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit;
 
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.openqa.selenium.By
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.firefox.FirefoxDriver
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.opennms.netmgt.poller.MonitoredService;
+import java.util.Map;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 class SeleniumGroovyTest  {
     
@@ -45,8 +47,10 @@ class SeleniumGroovyTest  {
     private String baseUrl="http://www.papajohns.co.uk/";
     private int timeout = 30;
     private StringBuffer verificationErrors = new StringBuffer();
+	
+	
     
-    public SeleniumGroovyTest(String url, int timeoutInSeconds) {
+    public SeleniumGroovyTest(String url, int timeoutInSeconds, MonitoredService svc, Map<String, Object> parameters) {
         baseUrl = url;
         timeout = timeoutInSeconds;
     }

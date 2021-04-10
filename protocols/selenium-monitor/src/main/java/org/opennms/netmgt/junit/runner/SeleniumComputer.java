@@ -28,13 +28,18 @@
 
 package org.opennms.netmgt.junit.runner;
 
+import java.util.Map;
+
 import org.junit.runner.Computer;
 import org.junit.runner.Runner;
 import org.junit.runners.model.RunnerBuilder;
+import org.opennms.netmgt.poller.MonitoredService;
 
 public class SeleniumComputer extends Computer{
     private String m_baseUrl = "";
     private int m_timeout = 3;
+    private MonitoredService m_svc=null;
+    private Map<String, Object> m_parameters=null;
     
     public SeleniumComputer() {
         
@@ -49,9 +54,16 @@ public class SeleniumComputer extends Computer{
         setTimeout(timeoutInSeconds);
     }
     
+    public SeleniumComputer( String baseUrl, int timeoutInSeconds, MonitoredService svc, Map<String, Object> parameters) {
+        setBaseUrl(baseUrl);
+        setTimeout(timeoutInSeconds);
+        setSvc(svc);
+        setParameters(parameters);
+    }
+    
     @Override
     protected Runner getRunner(RunnerBuilder builder, Class<?> testClass) throws Throwable {
-        return new TestClassRunnerForSelenium(testClass, getBaseUrl(), getTimeout());
+        return new TestClassRunnerForSelenium(testClass, getBaseUrl(), getTimeout(), getSvc(), getParameters());
     }
 
     public String getBaseUrl() {
@@ -69,5 +81,21 @@ public class SeleniumComputer extends Computer{
     public void setTimeout(int timeout) {
         m_timeout = timeout;
     }
+
+	public MonitoredService getSvc() {
+		return m_svc;
+	}
+
+	public void setSvc(MonitoredService svc) {
+		this.m_svc = svc;
+	}
+
+	public Map<String, Object> getParameters() {
+		return m_parameters;
+	}
+
+	public void setParameters(Map<String, Object> parameters) {
+		this.m_parameters = parameters;
+	}
     
 }

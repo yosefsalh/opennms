@@ -33,10 +33,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.runner.Runner;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
+import org.opennms.netmgt.poller.MonitoredService;
 
 public class SeleniumJUnitRunner extends Suite{
     
@@ -55,7 +57,7 @@ public class SeleniumJUnitRunner extends Suite{
     public SeleniumJUnitRunner(Class<?> testClass) throws InitializationError 
     {
         super(testClass, Collections.<Runner>emptyList());
-        m_runners.add(new TestClassRunnerForSelenium( getTestClass().getJavaClass(), getBaseUrlAnnotation( testClass ), getTimeoutAnnotation(testClass) ) );
+        m_runners.add(new TestClassRunnerForSelenium( getTestClass().getJavaClass(), getBaseUrlAnnotation( testClass ), getTimeoutAnnotation(testClass),null, null ) );
     }
     
 

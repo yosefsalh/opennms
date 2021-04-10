@@ -33,6 +33,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import org.opennms.netmgt.poller.MonitoredService;
+import java.util.Map;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -43,7 +45,7 @@ public class OpennmsSeleniumExample {
     private int timeout = 3;
 	private StringBuffer verificationErrors = new StringBuffer();
 
-    public OpennmsSeleniumExample(String url, int timeoutInSeconds) {
+    public OpennmsSeleniumExample(String url, int timeoutInSeconds, MonitoredService svc, Map<String, Object> parameters) {
          baseUrl = url;
          timeout = timeoutInSeconds;
     }

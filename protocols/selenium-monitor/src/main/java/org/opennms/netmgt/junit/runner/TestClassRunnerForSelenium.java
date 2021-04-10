@@ -29,26 +29,33 @@
 package org.opennms.netmgt.junit.runner;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
+import org.opennms.netmgt.poller.MonitoredService;
 
 public class TestClassRunnerForSelenium extends BlockJUnit4ClassRunner{
     
     private int m_timeout;
     private String m_baseUrl;
+    private MonitoredService svc;
+    private Map<String, Object> parameters;
     
-    TestClassRunnerForSelenium(Class<?> type, String baseUrl, int timeoutInSeconds) throws InitializationError {
+    
+    TestClassRunnerForSelenium(Class<?> type, String baseUrl, int timeoutInSeconds, MonitoredService svc, Map<String, Object> parameters) throws InitializationError {
         super(type);
         setBaseUrl(baseUrl);
         setTimeout(timeoutInSeconds);
+    	setSvc(svc);
+        setParameters(parameters);
     }
     
     
     
     @Override
     public Object createTest() throws Exception{
-        return getTestClass().getOnlyConstructor().newInstance(getBaseUrl(), getTimeout());
+        return getTestClass().getOnlyConstructor().newInstance(getBaseUrl(), getTimeout(), getSvc(), getParameters());
     }
     
     @Override
@@ -79,5 +86,30 @@ public class TestClassRunnerForSelenium extends BlockJUnit4ClassRunner{
     public void setBaseUrl(String baseUrl) {
         m_baseUrl = baseUrl;
     }
-    
+
+
+
+	public MonitoredService getSvc() {
+		return svc;
+	}
+
+
+
+	public void setSvc(MonitoredService svc) {
+		this.svc = svc;
+	}
+
+
+
+	public Map<String, Object> getParameters() {
+		return parameters;
+	}
+
+
+
+	public void setParameters(Map<String, Object> parameters) {
+		this.parameters = parameters;
+	}
+
+
 }

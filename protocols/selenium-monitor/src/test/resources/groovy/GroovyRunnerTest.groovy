@@ -28,15 +28,16 @@
 
 package selenium.test.groovy;
 
-import static org.junit.Assert.*
-
-import org.junit.Test
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.opennms.netmgt.poller.MonitoredService;
+import java.util.Map;
 
 class GroovyRunnerTest {
     
     private String m_baseUrl = "";
     private int m_timeout;
-    public GroovyRunnerTest(String baseUrl, int timeoutInSeconds) {
+    public GroovyRunnerTest(String baseUrl, int timeoutInSeconds, MonitoredService svc, Map<String, Object> parameters) {
         m_baseUrl = baseUrl;
         m_timeout = timeoutInSeconds;
     }

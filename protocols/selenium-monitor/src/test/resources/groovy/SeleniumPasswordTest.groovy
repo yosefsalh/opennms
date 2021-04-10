@@ -28,10 +28,10 @@
 
 package selenium.test.groovy;
 
-import static org.hamcrest.CoreMatchers.*
-import static org.junit.Assert.*
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit;
 
 import org.junit.*
 import org.openqa.selenium.*

@@ -51,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.opennms.core.logging.Logging;
 
-import org.openqa.selenium.remote.SessionNotFoundException;
 
 public class SeleniumMonitor extends AbstractServiceMonitor {
 	private static final Logger LOG = LoggerFactory.getLogger(SeleniumMonitor.class);
@@ -96,7 +95,7 @@ public class SeleniumMonitor extends AbstractServiceMonitor {
 
 					@Override
 					public Result call() throws Exception {
-						return runTest(getBaseUrl(parameters, svc), getTimeout(parameters), groovyclass);
+						return runTest(getBaseUrl(parameters, svc), getTimeout(parameters), groovyclass, svc, parameters);
 					}
 					
 				});
@@ -189,8 +188,8 @@ public class SeleniumMonitor extends AbstractServiceMonitor {
 		return stringBuilder.toString();
 	}
 
-	private Result runTest(String baseUrl, int timeoutInSeconds, Class<?> clazz) {
-		return JUnitCore.runClasses(new SeleniumComputer(baseUrl, timeoutInSeconds), clazz);
+	private Result runTest(String baseUrl, int timeoutInSeconds, Class<?> clazz, MonitoredService svc, Map<String, Object> parameters) {
+		return JUnitCore.runClasses(new SeleniumComputer(baseUrl, timeoutInSeconds, svc, parameters), clazz);
 	}
 
 	private String getGroovyFilename(Map<String, Object> parameters) {
@@ -204,9 +203,9 @@ public class SeleniumMonitor extends AbstractServiceMonitor {
 
 	private Class<?> createGroovyClass(String filename) throws CompilationFailedException, IOException {
 		GroovyClassLoader gcl = new GroovyClassLoader();
-
+	    
 		String file = System.getProperty("opennms.home") + "/etc/selenium/" + filename;
-		System.err.println("File name: " + file);
+		SeleniumMonitor.LOG.debug("Loading groovy class from file name: " + file);
 		return gcl.parseClass(new File(file));
 	}
 

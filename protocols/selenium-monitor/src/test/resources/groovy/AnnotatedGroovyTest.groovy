@@ -28,13 +28,15 @@
 
 package selenium.test.groovy;
 
-import static org.junit.Assert.*
+import static org.junit.Assert.*;
 
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.opennms.netmgt.junit.runner.SeleniumJUnitRunner
-import org.opennms.netmgt.junit.runner.SeleniumJUnitRunner.BaseUrl
-import org.opennms.netmgt.junit.runner.SeleniumJUnitRunner.TimeoutInSeconds
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.opennms.netmgt.poller.MonitoredService;
+import java.util.Map;
+import org.opennms.netmgt.junit.runner.SeleniumJUnitRunner;
+import org.opennms.netmgt.junit.runner.SeleniumJUnitRunner.BaseUrl;
+import org.opennms.netmgt.junit.runner.SeleniumJUnitRunner.TimeoutInSeconds;
 
 @RunWith(SeleniumJUnitRunner.class)
 @BaseUrl(url="http://www.papajohns.co.uk")
@@ -43,7 +45,7 @@ class AnnotatedGroovyTest {
 
     private String m_baseUrl = "";
     private int m_timeout;
-    public AnnotatedGroovyTest(String baseUrl, int timeoutInSeconds) {
+    public AnnotatedGroovyTest(String baseUrl, int timeoutInSeconds, MonitoredService svc, Map<String, Object> parameters) {
         m_baseUrl = baseUrl;
         m_timeout = timeoutInSeconds;
     }

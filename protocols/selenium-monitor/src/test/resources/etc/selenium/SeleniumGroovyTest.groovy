@@ -35,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.opennms.netmgt.poller.MonitoredService;
+import java.util.Map;
 import org.opennms.core.test.MockLogAppender;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -47,7 +49,7 @@ class SeleniumGroovyTest  {
     private int timeout = 30;
     private StringBuffer verificationErrors = new StringBuffer();
     
-    public SeleniumGroovyTest(String url, int timeoutInSeconds) {
+    public SeleniumGroovyTest(String url, int timeoutInSeconds, MonitoredService svc, Map<String, Object> parameters) {
         System.err.println("URL: " + url);
         baseUrl = url;
         timeout = timeoutInSeconds;
