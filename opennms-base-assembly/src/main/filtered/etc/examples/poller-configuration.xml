@@ -644,6 +644,32 @@
     <downtime interval="300000" begin="43200000" end="432000000" />  <!-- 5m, 12h, 5d -->
     <downtime begin="432000000" delete="true" />         <!-- anything after 5 days delete -->
   </package>
+  
+  <package name="opennmsSeleniumGroovyExamples">
+      <filter>IPADDR != '0.0.0.0'</filter>
+      <include-range begin="1.1.1.1" end="254.254.254.254"/>
+      <include-range begin="::1" end="ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"/>
+      <rrd step="300">
+         <rra>RRA:AVERAGE:0.5:1:2016</rra>
+         <rra>RRA:AVERAGE:0.5:12:1488</rra>
+         <rra>RRA:AVERAGE:0.5:288:366</rra>
+         <rra>RRA:MAX:0.5:288:366</rra>
+         <rra>RRA:MIN:0.5:288:366</rra>
+      </rrd>
+      
+      <service name="SeleniumHarCollector" interval="300000" user-defined="false" status="on">
+         <parameter key="retry" value="1" />
+         <parameter key="timeout" value="30000" />
+         <parameter key="rrd-repository" value="${install.share.dir}/rrd/response" />
+         <parameter key="rrd-base-name" value="SeleniumHarCollector" /> <!-- change name accordingly -->
+         <parameter key="ds-name" value="SeleniumHarCollector" /> <!-- change name accordingly -->
+         <parameter key="base-url" value="${requisition:serviceurl|undefined}" /> <!-- using monitored service's metadata--> 
+
+         <parameter key="selenium-test" value="OpennmsSeleniumHarCollector.groovy" />
+      </service>
+      <downtime begin="0" end="300000" interval="30000"/><!-- 30s, 0, 5m --> 
+  </package>
+   
 
   <monitor service="ICMP" class-name="org.opennms.netmgt.poller.monitors.IcmpMonitor" />
   <monitor service="StrafePing" class-name="org.opennms.netmgt.poller.monitors.StrafePingMonitor" />
@@ -671,7 +697,8 @@
   <monitor service="OpenNMS-JVM" class-name="org.opennms.netmgt.poller.monitors.Jsr160Monitor" />
 
   <!-- Example monitors added in this example file -->
-
+  
+  <monitor service="SeleniumHarCollector" class-name="org.opennms.netmgt.poller.monitors.SeleniumMonitor" />
   <monitor service="DominoIIOP" class-name="org.opennms.netmgt.poller.monitors.DominoIIOPMonitor" />
   <monitor service="Citrix" class-name="org.opennms.netmgt.poller.monitors.CitrixMonitor" />
   <monitor service="LDAP" class-name="org.opennms.netmgt.poller.monitors.LdapMonitor" />

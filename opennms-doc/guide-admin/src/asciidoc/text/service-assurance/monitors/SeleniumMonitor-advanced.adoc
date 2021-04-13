@@ -1,0 +1,168 @@
+
+// Allow GitHub image rendering
+:imagesdir: ../../../images
+
+==== SeleniumMonitor-advanced
+
+This page descibes advanced usage of the selenium monitor with Browser Mob Proxy to collect and store har data in ElasticSearch
+
+TODO COMPLETE DESCRIPTION
+
+complex example using bmp proxy
+
+
+
+===== Monitor facts
+
+[options="autowidth"]
+|===
+| Class Name     | `org.opennms.netmgt.poller.monitors.SeleniumMonitor`
+|===
+
+===== Configuration and Usage
+
+.Monitor specific parameters for the <MONITORNAME-HERE>
+[options="header, autowidth"]
+|===
+| Parameter        | Description                                                                                        | Required | Default value
+| `my parameter 1` | This is a placeholder for the first required monitor parameter description. If you have a very
+                     long description make a soft break at line 120                                                     | required | `-`
+| `my parameter 2` | This is a placeholder for the second optional monitor parameter description.                       | optional | `default value`
+|===
+
+This monitor implements the <<ga-service-assurance-monitors-common-parameters, Common Configuration Parameters>>.
+
+This is optional just if you can use variables in the configuration.
+
+.Variables which can be used in the configuration
+[options="header, autowidth"]
+|===
+| Variable        | Description
+| `${variable1}`  | Description for the first variable
+| `${variable2}`  | Description for the second variable
+| `${variable3}`  | Description for the third variable
+|===
+
+===== Examples
+
+Some example configuration how to configure the monitor in the `poller-configuration.xml`.
+
+[source, xml]
+----
+<parameter key="args" value="-i {variable3} -t ${variable2}"/>
+<parameter key="args" value="http://${variable1}/${variable2}/static"/>
+----
+
+.This section is optional and give some specific hints
+===== Selenium Monitor Specification=
+
+The SeleniumMonitor similar to the PageSequenceMonitor was created to handle tracking sequences on websites that rely heavily on Javascript within the site. The monitor uses the Selenium API to run regression testing through the browser on the supplied URL.
+
+
+==== Overview
+
+The SeleniumMonitor uses [http://seleniumhq.org/ Selenium] under the covers to test websites. You can use the Selenium IDE in Firefox, which is an add-on, to create your sequence. Once you have a working test running in the Selenium IDE you can export your test as a JUnit 4 (Webdriver) and with a few changes to the file can run that in OpenNMS.
+
+==== Create Selenium Test
+
+[[File:SeleniumIDE-Addon-Example.png|200px|thumb|right|LoginTest sequence example]]
+As we said above you have to create a working Selenium sequence.
+We will use the demo website of our Zabbix friends to give an example.
+The sequence uses the guest login, switches to the problem page and acknowledges all current alarm adding the comment "OpenNMS Selenium Test :-)".
+
+So download the [https://addons.mozilla.org/en-US/firefox/addon/selenium-ide/ add-on] for Firefox and create your sequence. When it's working, export the test case as '''JAVA / JUnit4 / Webdriver''' file using the extention '''.groovy'''. eg. LoginTest.groovy.
+
+==== Groovy File Modifications
+
+The exported Groovy file should similar to this one:
+
+```
+package com.example.tests;
+
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+public class LoginTest {
+  private WebDriver driver;
+  private String baseUrl;
+  private boolean acceptNextAlert = true;
+  private StringBuffer verificationErrors = new StringBuffer();
+
+  @Before
+  public void setUp() throws Exception {
+    driver = new FirefoxDriver();
+    baseUrl = "https://zabbix.org/zabbix/";
+    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+  }
+
+  @Test
+  public void testLogin() throws Exception {
+    driver.get(baseUrl + "/zabbix/");
+    driver.findElement(By.linkText("sign in as guest")).click();
+    driver.findElement(By.linkText("Problems")).click();
+    driver.findElement(By.id("all_eventids")).click();
+    driver.findElement(By.cssSelector("button[name=\"action\"]")).click();
+    driver.findElement(By.id("message")).clear();
+    driver.findElement(By.id("message")).sendKeys("OpenNMS Selenium Test :-)");
+    driver.findElement(By.id("acknowledge_type_1")).click();
+    driver.findElement(By.name("action")).click();
+    driver.findElement(By.cssSelector("a.top-nav-signout")).click();
+  }...
+```
+
+
+== OpenNMS SeleniumPoller ==
+
+To make your Selenium testcase runnable by the OpenNMS SeleniumMonitor follow the next steps.
+
+Changing the Package
+At the top of the groovy class change the package to
+
+```
+package selenium;
+```
+
+Creating the Constructor
+
+If my exported JUnit 4 (Webdriver) groovy file's name is LoginTest.groovy I would create a constructor like the following.
+
+```
+public LoginTest( String url, int timeoutInSeconds) {
+  baseUrl = url;
+  timeout = timeoutInSeconds;
+}
+```
+
+The constructor currently takes two parameters, a url and a timeout value in seconds. The url is set as the base url to test against.
+
+dding the Fields
+
+You will need to add a timeout field and change a line of code in the test to use the timeout we set in the constructor.
+
+Add a timeout field at top of the class under the baseUrl field or type int.
+
+```
+private String baseUrl;
+private int timeout = 30;
+```
+
+Next you will want to set the timeout value for the webdriver using the timeout field you just created. Find the line of code that looks like this,
+
+```
+driver.manage().timeouts().implicitlyWait( 30, TimeUnit.SECONDS);
+```
+
+and change it to this,
+
+```
+driver.manage().timeouts().implicitlyWait( timeout, TimeUnit.SECONDS);
+```
+
+If you do not have that line of code just add it in the '''setUp()''' method.
+

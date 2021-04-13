@@ -150,6 +150,9 @@
     <logger name="org.apache.kafka" additivity="false" level="INFO">
       <appender-ref ref="RoutingAppender" />
     </logger>
+    <logger name="selenium" additivity="false" level="DEBUG">
+      <appender-ref ref="RoutingAppender" />
+    </logger>
 
     <!-- Allow any message to pass through the root logger -->
     <root level="DEBUG">
@@ -210,6 +213,7 @@
         <KeyValuePair key="trouble-ticketer"     value="DEBUG" />
         <KeyValuePair key="vacuumd"              value="DEBUG" />
         <KeyValuePair key="web"                  value="DEBUG" />
+        <KeyValuePair key="selenium_groovy"      value="DEBUG" />
       </DynamicThresholdFilter>
 
       <appender-ref ref="RoutingAppender"/>
