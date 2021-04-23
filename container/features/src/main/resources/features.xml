@@ -1756,4 +1756,42 @@
     <feature name="opennms-perspective-poller" description="OpenNMS :: Features :: Perspective Poller" version="${project.version}">
         <bundle>mvn:org.opennms.features/org.opennms.features.perspectivepoller/${project.version}</bundle>
     </feature>
+    <feature name="opennms-selenium-monitor" description="OpenNMS :: Features :: Selenium Monitor" version="${project.version}">
+        <feature>opennms-poller-api</feature>
+        <feature>selenium</feature>
+        <feature>dnsjava</feature>
+        <feature>guava</feature>
+        <feature>bcprov</feature>
+        <feature>commons-lang3</feature>
+        <feature version="${netty4Version}">netty4</feature>
+        <bundle>wrap:mvn:net.lightbody.bmp/browsermob-core/2.1.5</bundle>
+        <bundle>wrap:mvn:net.lightbody.bmp/mitm/2.1.5</bundle>
+        <bundle>wrap:mvn:net.lightbody.bmp/littleproxy/1.1.0-beta-bmp-17</bundle>
+        <bundle>wrap:mvn:com.jcraft/jzlib/1.1.3</bundle>
+        <bundle>wrap:mvn:org.bouncycastle/bcpkix-jdk15on/${bouncyCastleVersion}</bundle>
+        <bundle>wrap:mvn:com.google.code.gson/gson/${gsonVersion}</bundle>
+        <bundle dependency="true">mvn:org.ow2.asm/asm-all/${asmVersion}</bundle>
+        <bundle>mvn:org.opennms/opennms-util/${project.version}</bundle>
+        <bundle>mvn:org.codehaus.groovy/groovy-all/${groovyVersion}</bundle>
+        <bundle>wrap:mvn:junit/junit/${junitVersion}</bundle>
+        <bundle>wrap:mvn:com.codeborne/phantomjsdriver/${phantomjsVersion}</bundle>
+        <bundle>wrap:mvn:xerces/xercesImpl/${xercesVersion}</bundle>
+        <bundle>wrap:mvn:xalan/xalan/${xalanVersion}</bundle>
+        <bundle>wrap:mvn:com.schibsted.spt.data/jslt/0.1.11</bundle>
+        <bundle>mvn:org.apache.httpcomponents/httpasyncclient-osgi/4.1.3</bundle>
+        <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2Version}</bundle>
+        <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2Version}</bundle>
+        <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-core/${jackson2Version}</bundle>
+        <bundle>mvn:org.opennms.protocols/selenium-monitor/${project.version}</bundle>
+    </feature>
+    <feature name="selenium" description="OpenNMS:: Features:: Selenium Dependencies" version="${project.version}">
+        <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-api/${seleniumVersion}</bundle>
+        <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-java/${seleniumVersion}</bundle>
+        <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-support/${seleniumVersion}</bundle>
+        <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-remote-driver/${seleniumVersion}</bundle>
+        <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-htmlunit-driver/2.52.0</bundle>
+        <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-firefox-driver/${seleniumVersion}</bundle>
+        <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-chrome-driver/${seleniumVersion}</bundle>
+        <bundle>wrap:mvn:net.bytebuddy/byte-buddy/1.8.15</bundle>
+    </feature>
 </features>

@@ -184,16 +184,19 @@
       <dependency>
          <groupId>com.codeborne</groupId>
          <artifactId>phantomjsdriver</artifactId>
+         <version>${phantomjsVersion}</version>
       </dependency>
 
       <dependency>
          <groupId>xerces</groupId>
          <artifactId>xercesImpl</artifactId>
+         <version>${xercesVersion}</version>
       </dependency>
 
       <dependency>
          <groupId>xalan</groupId>
          <artifactId>xalan</artifactId>
+         <version>${xalanVersion}</version>
       </dependency>
 
       <dependency>
@@ -225,30 +228,22 @@
       <dependency>
          <groupId>org.ow2.asm</groupId>
          <artifactId>asm-all</artifactId>
+         <version>${asmVersion}</version>
       </dependency>
       <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-api</artifactId>
+         <version>${slf4jVersion}</version>
       </dependency>
       <dependency>
          <groupId>com.google.guava</groupId>
          <artifactId>guava</artifactId>
+         <version>${guavaVersion}</version>
       </dependency>
       <dependency> <!-- PhantomJS requires this library -->
          <groupId>com.google.code.gson</groupId>
          <artifactId>gson</artifactId>
          <version>${gsonVersion}</version>
-      </dependency>
-
-      <dependency>
-         <groupId>org.opennms.core.test-api</groupId>
-         <artifactId>org.opennms.core.test-api.http</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.opennms.core.test-api</groupId>
-         <artifactId>org.opennms.core.test-api.services</artifactId>
-         <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -345,23 +340,28 @@
       <dependency>
          <groupId>org.bouncycastle</groupId>
          <artifactId>bcprov-jdk15on</artifactId>
+         <version>${bouncyCastleVersion}</version>
       </dependency>
       <dependency>
          <groupId>org.bouncycastle</groupId>
          <artifactId>bcpkix-jdk15on</artifactId>
+         <version>${bouncyCastleVersion}</version>
       </dependency>
 
       <dependency>
          <groupId>com.fasterxml.jackson.core</groupId>
          <artifactId>jackson-core</artifactId>
+         <version>${jackson2Version}</version>
       </dependency>
       <dependency>
          <groupId>com.fasterxml.jackson.core</groupId>
          <artifactId>jackson-databind</artifactId>
+         <version>${jackson2Version}</version>
       </dependency>
       <dependency>
          <groupId>com.fasterxml.jackson.core</groupId>
          <artifactId>jackson-annotations</artifactId>
+         <version>${jackson2Version}</version>
       </dependency>
 
 <!--       slf4j -->
@@ -388,7 +388,16 @@
 <!--          <artifactId>log4j-slf4j-impl</artifactId> -->
 <!--          <scope>test</scope> -->
 <!--       </dependency> -->
-
+      <dependency>
+         <groupId>org.opennms.core.test-api</groupId>
+         <artifactId>org.opennms.core.test-api.http</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.opennms.core.test-api</groupId>
+         <artifactId>org.opennms.core.test-api.services</artifactId>
+         <scope>test</scope>
+      </dependency>
 
    </dependencies>
 </project>
