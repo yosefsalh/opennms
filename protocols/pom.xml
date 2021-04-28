@@ -16,5 +16,6 @@
     <module>xml</module>
     <module>xmp</module>
     <module>selenium-monitor</module>
+    <module>browsermob</module>
   </modules>
 </project>

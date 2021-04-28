@@ -26,35 +26,36 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package selenium;
-
-import static org.junit.Assert.*
-
-import java.util.concurrent.TimeUnit
+package selenium
 
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.opennms.netmgt.poller.MonitoredService
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.firefox.FirefoxDriver
-import org.opennms.netmgt.poller.MonitoredService;
-import java.util.Map;
+
+import java.util.concurrent.TimeUnit
+
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.fail;
 
 class OpennmsSeleniumExample  {
-    
+
     private WebDriver driver;
     private String baseUrl="http://www.papajohns.co.uk/";
     private int timeout = 30;
     private StringBuffer verificationErrors = new StringBuffer();
-    
+
     public OpennmsSeleniumExample(String url, int timeoutInSeconds, MonitoredService svc, Map<String, Object> parameters) {
         baseUrl = url;
         timeout = timeoutInSeconds;
     }
-    
+
     @Before
     public void setUp() throws Exception {
+        System.setProperty("webdriver.gecko.driver", "/home/chandra/tmp/geckodriver");
         driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(timeout, TimeUnit.SECONDS);
     }

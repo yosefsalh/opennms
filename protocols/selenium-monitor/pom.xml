@@ -33,7 +33,7 @@
                </instructions>
             </configuration>
          </plugin>
-         <plugin>
+<!--         <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <configuration>
                <descriptors>
@@ -52,7 +52,7 @@
                   </goals>
                </execution>
             </executions>
-         </plugin>
+         </plugin>-->
       </plugins>
    </build>
 
@@ -257,8 +257,14 @@
          <artifactId>httpasyncclient-osgi</artifactId>
       </dependency>
 
-      <!-- browsermob dependencies -->
       <dependency>
+         <groupId>org.opennms.protocols</groupId>
+         <artifactId>org.opennms.protocols.browsermob-shaded</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+
+      <!-- browsermob dependencies -->
+     <!-- <dependency>
          <groupId>net.lightbody.bmp</groupId>
          <artifactId>browsermob-core</artifactId>
          <version>${browsermob-core-version}</version>
@@ -307,19 +313,16 @@
          <artifactId>mitm</artifactId>
          <version>${browsermob-core-version}</version>
       </dependency>
-
       <dependency>
          <groupId>net.lightbody.bmp</groupId>
          <artifactId>littleproxy</artifactId>
          <version>1.1.0-beta-bmp-17</version>
-      </dependency>
-
+      </dependency>-->
       <dependency>
          <groupId>com.jcraft</groupId>
          <artifactId>jzlib</artifactId>
          <version>1.1.3</version>
       </dependency>
-
       <dependency>
          <groupId>org.apache.commons</groupId>
          <artifactId>commons-lang3</artifactId>

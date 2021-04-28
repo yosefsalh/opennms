@@ -1347,6 +1347,7 @@
     <awsSdkVersion>1.11.218</awsSdkVersion>
     <batikVersion>1.7</batikVersion>
     <bouncyCastleVersion>1.66</bouncyCastleVersion>
+    <browsermob-core-version>2.1.5</browsermob-core-version>
     <bsfVersion>2.4.0</bsfVersion>
     <bsonVersion>3.5.0</bsonVersion>
     <caffeineVersion>2.8.0</caffeineVersion>
