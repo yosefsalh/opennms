@@ -383,6 +383,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.opennms.protocols</groupId>
+            <artifactId>org.opennms.protocols.browsermob-shaded</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.opennms.features.dnsresolver</groupId>
             <artifactId>org.opennms.features.dnsresolver.netty</artifactId>
             <version>${project.version}</version>
