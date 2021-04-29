@@ -1764,7 +1764,7 @@
         <feature>bcprov</feature>
         <feature>commons-lang3</feature>
  <!--       <feature version="${netty4Version}">netty4</feature>-->
-        <bundle>wrap:mvn:io.netty/netty-all/${netty4Version}</bundle>
+     <!--   <bundle>wrap:mvn:io.netty/netty-all/${netty4Version}</bundle>-->
   <!--      <bundle>wrap:mvn:net.lightbody.bmp/browsermob-core/2.1.5</bundle>
         <bundle>wrap:mvn:net.lightbody.bmp/mitm/2.1.5</bundle>-->
         <bundle>mvn:org.opennms.protocols/org.opennms.protocols.browsermob-shaded/${project.version}</bundle>

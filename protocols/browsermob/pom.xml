@@ -34,16 +34,13 @@
             <configuration>
               <artifactSet>
                 <excludes>
-                  <exclude>org.apache.commons:commons-lang3</exclude>
+<!--                  <exclude>org.apache.commons:commons-lang3</exclude>
                   <exclude>dnsjava:dnsjava</exclude>
                   <exclude>org.slf4j:jcl-over-slf4j</exclude>
-                  <exclude>io.netty:netty-all</exclude>
                   <exclude>org.bouncycastle:bcprov-jdk15on</exclude>
                   <exclude>org.bouncycastle:bcpkix-jdk15on</exclude>
-                  <exclude>com.fasterxml.jackson.core:jackson-core</exclude>
-                  <exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
                   <exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
-                  <exclude>com.sun.xml.bind:jaxb-core</exclude>
+                  <exclude>com.sun.xml.bind:jaxb-core</exclude>-->
                 </excludes>
               </artifactSet>
               <filters>
@@ -62,8 +59,16 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Import-Package>
+              javax.net.ssl,
+              javax.crypto.spec
+            </Import-Package>
             <Export-Package>
-              net.lightbody.bmp.*
+              net.lightbody.bmp.client,
+              net.lightbody.bmp.mitm,
+              net.lightbody.bmp.proxy,
+              net.lightbody.bmp.core.har,
+              net.lightbody.bmp
             </Export-Package>
           </instructions>
           <unpackBundle>true</unpackBundle>
@@ -77,7 +82,7 @@
       <groupId>net.lightbody.bmp</groupId>
       <artifactId>browsermob-core</artifactId>
       <version>${browsermob-core-version}</version>
-      <exclusions>
+<!--      <exclusions>
         <exclusion>
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-lang3</artifactId>
@@ -91,10 +96,6 @@
           <artifactId>jcl-over-slf4j</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-all</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.bouncycastle</groupId>
           <artifactId>bcprov-jdk15on</artifactId>
         </exclusion>
@@ -104,19 +105,15 @@
         </exclusion>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-annotations</artifactId>
         </exclusion>
-      </exclusions>
+      </exclusions>-->
     </dependency>
-
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>${netty4Version}</version>
+    </dependency>
     <dependency>
       <groupId>net.lightbody.bmp</groupId>
       <artifactId>mitm</artifactId>

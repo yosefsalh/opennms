@@ -33,7 +33,7 @@
                </instructions>
             </configuration>
          </plugin>
-<!--         <plugin>
+         <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <configuration>
                <descriptors>
@@ -52,7 +52,7 @@
                   </goals>
                </execution>
             </executions>
-         </plugin>-->
+         </plugin>
       </plugins>
    </build>
 
@@ -257,14 +257,14 @@
          <artifactId>httpasyncclient-osgi</artifactId>
       </dependency>
 
-      <dependency>
+<!--      <dependency>
          <groupId>org.opennms.protocols</groupId>
          <artifactId>org.opennms.protocols.browsermob-shaded</artifactId>
          <version>${project.version}</version>
-      </dependency>
+      </dependency>-->
 
       <!-- browsermob dependencies -->
-     <!-- <dependency>
+      <dependency>
          <groupId>net.lightbody.bmp</groupId>
          <artifactId>browsermob-core</artifactId>
          <version>${browsermob-core-version}</version>
@@ -317,7 +317,7 @@
          <groupId>net.lightbody.bmp</groupId>
          <artifactId>littleproxy</artifactId>
          <version>1.1.0-beta-bmp-17</version>
-      </dependency>-->
+      </dependency>
       <dependency>
          <groupId>com.jcraft</groupId>
          <artifactId>jzlib</artifactId>
@@ -339,6 +339,7 @@
       <dependency>
          <groupId>io.netty</groupId>
          <artifactId>netty-all</artifactId>
+         <version>${netty4Version}</version>
       </dependency>
       <dependency>
          <groupId>org.bouncycastle</groupId>
