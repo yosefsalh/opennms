@@ -62,7 +62,8 @@
           <instructions>
             <Import-Package>
               javax.net.ssl,
-              javax.crypto.spec
+              javax.crypto.spec,
+              org.openqa.selenium
             </Import-Package>
             <Export-Package>
               net.lightbody.bmp.client,
