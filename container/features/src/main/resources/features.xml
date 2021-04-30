@@ -1788,7 +1788,7 @@
         <bundle>mvn:org.opennms.protocols/selenium-monitor/${project.version}</bundle>
     </feature>
     <feature name="selenium" description="OpenNMS:: Features:: Selenium Dependencies" version="${project.version}">
-        <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-api/${seleniumVersion}</bundle>
+        <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-api/${seleniumVersion}$Export-Package=org.openqa.selenium*</bundle>
         <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-java/${seleniumVersion}</bundle>
         <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-support/${seleniumVersion}</bundle>
         <bundle>wrap:mvn:org.seleniumhq.selenium/selenium-remote-driver/${seleniumVersion}</bundle>

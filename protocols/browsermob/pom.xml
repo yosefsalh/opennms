@@ -41,6 +41,7 @@
                   <exclude>org.bouncycastle:bcpkix-jdk15on</exclude>
                   <exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
                   <exclude>com.sun.xml.bind:jaxb-core</exclude>-->
+           <!--       <exclude>io.netty:netty-all</exclude>-->
                 </excludes>
               </artifactSet>
               <filters>
@@ -82,8 +83,8 @@
       <groupId>net.lightbody.bmp</groupId>
       <artifactId>browsermob-core</artifactId>
       <version>${browsermob-core-version}</version>
-<!--      <exclusions>
-        <exclusion>
+      <exclusions>
+<!--        <exclusion>
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-lang3</artifactId>
         </exclusion>
@@ -106,13 +107,17 @@
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-annotations</artifactId>
-        </exclusion>
-      </exclusions>-->
+        </exclusion>-->
+<!--        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+        </exclusion>-->
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
-      <version>${netty4Version}</version>
+      <version>4.0.51.Final</version>
     </dependency>
     <dependency>
       <groupId>net.lightbody.bmp</groupId>
