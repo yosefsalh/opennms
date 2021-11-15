@@ -38,6 +38,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.opennms.core.grpc.common.GrpcIpcServer;
 import org.opennms.core.grpc.common.GrpcIpcUtils;
+import org.opennms.core.ipc.twin.api.TwinStrategy;
 import org.opennms.core.ipc.twin.common.AbstractTwinPublisher;
 import org.opennms.core.ipc.twin.common.LocalTwinSubscriber;
 import org.opennms.core.ipc.twin.common.TwinRequest;
@@ -108,9 +109,11 @@ public class GrpcTwinPublisher extends AbstractTwinPublisher {
 
 
     public void close() throws IOException {
-        grpcIpcServer.stopServer();
-        LOG.info("Stopped Twin GRPC Server");
-        twinRpcExecutor.shutdown();
+        try (Logging.MDCCloseable mdc = Logging.withPrefixCloseable(TwinStrategy.LOG_PREFIX)) {
+            grpcIpcServer.stopServer();
+            twinRpcExecutor.shutdown();
+            LOG.info("Stopped Twin GRPC Server");
+        }
     }
 
     private class StreamHandler extends OpenNMSTwinIpcGrpc.OpenNMSTwinIpcImplBase {
