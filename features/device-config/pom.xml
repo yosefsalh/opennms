@@ -13,8 +13,12 @@
     <artifactId>org.opennms.features.device-config</artifactId>
     <packaging>pom</packaging>
     <name>OpenNMS :: Features :: Device Config</name>
+
     <modules>
         <module>persistence</module>
         <module>monitor</module>
+        <module>tftp</module>
+        <module>shell</module>
     </modules>
+
 </project>
