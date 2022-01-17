@@ -26,15 +26,18 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.features.deviceconfig.persistence.api;
+package org.opennms.features.deviceconfig.monitors;
 
-import org.opennms.netmgt.dao.api.OnmsDao;
-import org.opennms.netmgt.model.OnmsIpInterface;
+import org.opennms.netmgt.poller.MonitoredService;
+import org.opennms.netmgt.poller.PollStatus;
+import org.opennms.netmgt.poller.support.AbstractServiceMonitor;
 
-import java.util.List;
+import java.util.Map;
 
-public interface DeviceConfigDao extends OnmsDao<DeviceConfig, Long> {
+public class DeviceConfigMonitor extends AbstractServiceMonitor {
 
-    List<DeviceConfig> findConfigsForInterfaceSortedByDate(OnmsIpInterface ipInterface);
-
+    @Override
+    public PollStatus poll(MonitoredService svc, Map<String, Object> parameters) {
+        return null;
+    }
 }

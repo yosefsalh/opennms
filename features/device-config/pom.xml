@@ -15,5 +15,6 @@
     <name>OpenNMS :: Features :: Device Config</name>
     <modules>
         <module>persistence</module>
+        <module>monitor</module>
     </modules>
 </project>
