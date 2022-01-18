@@ -98,8 +98,6 @@ public class QueryManagerDaoImpl implements QueryManager {
     @Autowired
     private DeviceConfigDao deviceConfigDao;
 
-    @Autowired
-    private EntityScopeProvider entityScopeProvider;
 
     /** {@inheritDoc} */
     @Override
