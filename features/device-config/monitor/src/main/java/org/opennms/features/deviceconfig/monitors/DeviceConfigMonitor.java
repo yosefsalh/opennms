@@ -33,10 +33,12 @@ import org.opennms.features.deviceconfig.sshscripting.SshScriptingService;
 import org.opennms.features.deviceconfig.tftp.TftpFileReceiver;
 import org.opennms.features.deviceconfig.tftp.TftpServer;
 import org.opennms.netmgt.poller.MonitoredService;
-import org.opennms.netmgt.poller.Poll;
 import org.opennms.netmgt.poller.PollStatus;
 import org.opennms.netmgt.poller.support.AbstractServiceMonitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.time.Duration;
 import java.util.HashMap;
@@ -49,43 +51,49 @@ import java.util.concurrent.TimeoutException;
 
 public class DeviceConfigMonitor extends AbstractServiceMonitor {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DeviceConfigMonitor.class);
     private TftpServer tftpServer;
     private SshScriptingService sshScriptingService;
-    private static final Duration defaultDuration = Duration.ofMinutes(5);
-    private static final int defaultSshPort = 22;
+    private static final Duration DEFAULT_DURATION = Duration.ofMinutes(1); // 60sec
+    private static final long DEFAULT_TTL = 180000; //180sec
+    private static final int DEFAULT_SSH_PORT = 22;
 
     @Override
     public PollStatus poll(MonitoredService svc, Map<String, Object> parameters) {
         if (tftpServer == null) {
             tftpServer = BeanUtils.getBean("daoContext", "tftpServer", TftpServer.class);
         }
-        if(sshScriptingService == null) {
+        if (sshScriptingService == null) {
             sshScriptingService = BeanUtils.getBean("daoContext", "sshScriptingService", SshScriptingService.class);
         }
         TftpReceiver tftpReceiver = new TftpReceiver(svc.getAddress());
-        tftpServer.register(tftpReceiver);
+        try {
+            tftpServer.register(tftpReceiver);
+        } catch (IOException e) {
+            LOG.error("Exception while connecting to TFTP Server ", e);
+            return PollStatus.down("Couldn't connect to Tftp Server");
+        }
         String script = getObjectAsStringFromParams(parameters, "script");
         String user = getObjectAsStringFromParams(parameters, "username");
         String password = getObjectAsStringFromParams(parameters, "password");
         Integer portValue = getObjectAsIntFromParams(parameters, "port");
-        int port = portValue != null ? portValue : defaultSshPort;
+        int port = portValue != null ? portValue : DEFAULT_SSH_PORT;
         Long timeout = getObjectAsLongFromParams(parameters, "timeout");
-        Duration duration = timeout != null ? Duration.ofMillis(timeout) : defaultDuration;
+        Duration duration = timeout != null ? Duration.ofMillis(timeout) : DEFAULT_DURATION;
         Long ttlValue = getObjectAsLongFromParams(parameters, "ttl");
-        long ttl = ttlValue != null ? ttlValue : defaultDuration.toMillis();
+        long ttl = ttlValue != null ? ttlValue : DEFAULT_TTL;
         Optional<SshScriptingService.Failure> sshResult =
                 sshScriptingService.execute(script, user, password, svc.getIpAddr(), port, new HashMap<>(), duration);
-        // TODO: May need multiple ssh script execution
         CompletableFuture<byte[]> configObj = tftpReceiver.getConfigFuture();
         try {
             byte[] config = configObj.get(ttl, TimeUnit.MILLISECONDS);
-            PollStatus pollStatus =  PollStatus.up();
+            PollStatus pollStatus = PollStatus.up();
             pollStatus.setDeviceConfig(config);
             return pollStatus;
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
-
+            LOG.error("Config retrieval failed", e);
+            return PollStatus.unresponsive("Config retrieval failed : " + e.getMessage());
         }
-        return PollStatus.unknown("no result available within duration");
     }
 
     static private class TftpReceiver implements TftpFileReceiver {
@@ -99,9 +107,8 @@ public class DeviceConfigMonitor extends AbstractServiceMonitor {
 
         @Override
         public void onFileReceived(InetAddress address, String fileName, byte[] content) {
-            // Received for the same address
             if (serviceAddress.equals(address)) {
-               configFuture.complete(content);
+                configFuture.complete(content);
             }
         }
 
@@ -110,14 +117,17 @@ public class DeviceConfigMonitor extends AbstractServiceMonitor {
         }
     }
 
-
     public void setTftpServer(TftpServer tftpServer) {
         this.tftpServer = tftpServer;
     }
 
+    public void setSshScriptingService(SshScriptingService sshScriptingService) {
+        this.sshScriptingService = sshScriptingService;
+    }
+
     private String getObjectAsStringFromParams(Map<String, Object> params, String key) {
         Object obj = params.get(key);
-        if(obj instanceof String) {
+        if (obj instanceof String) {
             return (String) obj;
         }
         return null;

@@ -588,8 +588,11 @@ public class TftpServerImpl implements TftpServer, Runnable, AutoCloseable {
     }
 
     @Override
-    public void register(TftpFileReceiver receiver) {
+    public void register(TftpFileReceiver receiver) throws IOException {
         synchronized (receivers) {
+            if (serverTftp_ == null) {
+                launch();
+            }
             receivers.add(receiver);
         }
     }
@@ -598,6 +601,10 @@ public class TftpServerImpl implements TftpServer, Runnable, AutoCloseable {
     public void deregister(TftpFileReceiver receiver) {
         synchronized (receivers) {
             receivers.remove(receiver);
+            if(receivers.isEmpty()) {
+                close();
+                serverTftp_ = null;
+            }
         }
     }
 
