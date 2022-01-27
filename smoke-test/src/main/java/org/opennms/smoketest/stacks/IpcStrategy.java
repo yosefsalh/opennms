@@ -34,5 +34,7 @@ package org.opennms.smoketest.stacks;
 public enum IpcStrategy {
     JMS,
     KAFKA,
-    GRPC
+    GRPC,
+    // This is to verify that old config still works.
+    KAFKA_IPC_OLD_CONFIG
 }

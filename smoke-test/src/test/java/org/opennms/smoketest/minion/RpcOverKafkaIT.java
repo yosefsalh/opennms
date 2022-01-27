@@ -63,7 +63,7 @@ public class RpcOverKafkaIT {
     @ClassRule
     public static final OpenNMSStack stack = OpenNMSStack.withModel(StackModel.newBuilder()
             .withMinion()
-            .withIpcStrategy(IpcStrategy.KAFKA)
+            .withIpcStrategy(IpcStrategy.KAFKA_IPC_OLD_CONFIG)
             .build());
 
     private static final String LOCALHOST = "127.0.0.1";

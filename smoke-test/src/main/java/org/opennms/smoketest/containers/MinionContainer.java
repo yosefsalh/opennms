@@ -178,6 +178,58 @@ public class MinionContainer extends GenericContainer implements KarafContainer,
                     "\t}\n" +
                     "}";
             OverlayUtils.writeYaml(minionConfigYaml, jsonMapper.readValue(grpc, Map.class));
+        } else if (IpcStrategy.KAFKA_IPC_OLD_CONFIG.equals(model.getIpcStrategy())) {
+
+            String kafkaRpc = "{\n" +
+                    "\t\"ipc\": {\n" +
+                    "\t\t\"rpc\": {\n" +
+                    "\t\t\t\"kafka\": {\n" +
+                    "\t\t\t\t\"bootstrap.servers\": \""+ OpenNMSContainer.KAFKA_ALIAS +":9092\",\n" +
+                    "\t\t\t\t\"acks\": 1,\n" +
+                    "\t\t\t\t\"compression.type\": \""+ model.getKafkaCompressionStrategy().getCodec() +"\"\n" +
+                    "\t\t\t}\n" +
+                    "\t\t}\n" +
+                    "\t}\n" +
+                    "}";
+
+            OverlayUtils.writeYaml(minionConfigYaml, jsonMapper.readValue(kafkaRpc, Map.class));
+
+            String kafkaSink = "{\n" +
+                    "\t\"ipc\": {\n" +
+                    "\t\t\"sink\": {\n" +
+                    "\t\t\t\"kafka\": {\n" +
+                    "\t\t\t\t\"bootstrap.servers\": \""+ OpenNMSContainer.KAFKA_ALIAS +":9092\",\n" +
+                    "\t\t\t\t\"acks\": 1,\n" +
+                    "\t\t\t\t\"compression.type\": \""+ model.getKafkaCompressionStrategy().getCodec() +"\"\n" +
+                    "\t\t\t}\n" +
+                    "\t\t}\n" +
+                    "\t}\n" +
+                    "}";
+            OverlayUtils.writeYaml(minionConfigYaml, jsonMapper.readValue(kafkaSink, Map.class));
+
+            String kafkaTwin = "{\n" +
+                    "\t\"ipc\": {\n" +
+                    "\t\t\"twin\": {\n" +
+                    "\t\t\t\"kafka\": {\n" +
+                    "\t\t\t\t\"bootstrap.servers\": \""+ OpenNMSContainer.KAFKA_ALIAS +":9092\",\n" +
+                    "\t\t\t\t\"acks\": 1,\n" +
+                    "\t\t\t\t\"compression.type\": \""+ model.getKafkaCompressionStrategy().getCodec() +"\"\n" +
+                    "\t\t\t}\n" +
+                    "\t\t}\n" +
+                    "\t}\n" +
+                    "}";
+            OverlayUtils.writeYaml(minionConfigYaml, jsonMapper.readValue(kafkaTwin, Map.class));
+
+            String kafkaIpc = "{\n" +
+                    "\t\"ipc\": {\n" +
+                    "\t\t\"kafka\": {\n" +
+                    "\t\t\t\"bootstrap.servers\": \""+ OpenNMSContainer.KAFKA_ALIAS +":9092\",\n" +
+                    "\t\t\t\"acks\": 1,\n" +
+                    "\t\t\t\"compression.type\": \""+ model.getKafkaCompressionStrategy().getCodec() +"\"\n" +
+                    "\t\t}\n" +
+                    "\t}\n" +
+                    "}";
+            OverlayUtils.writeYaml(minionConfigYaml, jsonMapper.readValue(kafkaIpc, Map.class));
         }
     }
 
