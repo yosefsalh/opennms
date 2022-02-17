@@ -53,6 +53,7 @@ public class DeviceConfigServiceImpl implements DeviceConfigService {
     private static final String DEVICE_CONFIG_SERVICE_NAME_PREFIX = "DeviceConfig-";
     private static final String DEVICE_CONFIG_MONITOR_CLASS_NAME = "org.opennms.features.deviceconfig.monitors.DeviceConfigMonitor";
     private static final Logger LOG = LoggerFactory.getLogger(DeviceConfigServiceImpl.class);
+
     @Autowired
     private LocationAwarePollerClient locationAwarePollerClient;
 
@@ -102,5 +103,21 @@ public class DeviceConfigServiceImpl implements DeviceConfigService {
                         ipAddress, location, service, throwable);
             }
         }));
+    }
+
+    public void setLocationAwarePollerClient(LocationAwarePollerClient locationAwarePollerClient) {
+        this.locationAwarePollerClient = locationAwarePollerClient;
+    }
+
+    public void setSessionUtils(SessionUtils sessionUtils) {
+        this.sessionUtils = sessionUtils;
+    }
+
+    public void setIpInterfaceDao(IpInterfaceDao ipInterfaceDao) {
+        this.ipInterfaceDao = ipInterfaceDao;
+    }
+
+    public void setServiceMonitorAdaptor(ServiceMonitorAdaptor serviceMonitorAdaptor) {
+        this.serviceMonitorAdaptor = serviceMonitorAdaptor;
     }
 }
