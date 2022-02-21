@@ -35,7 +35,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.opennms.core.spring.BeanUtils;
-import org.opennms.features.deviceconfig.retrieval.api.Retriever;
+import org.opennms.features.deviceconfig.retrieval.Protocol;
+import org.opennms.features.deviceconfig.retrieval.Retriever;
 import org.opennms.netmgt.poller.MonitoredService;
 import org.opennms.netmgt.poller.PollStatus;
 import org.opennms.netmgt.poller.support.AbstractServiceMonitor;
@@ -69,7 +70,7 @@ public class DeviceConfigMonitor extends AbstractServiceMonitor {
         var host = svc.getIpAddr();
         var stringParameters = parameters.entrySet().stream().collect(toMap(Map.Entry::getKey, e -> String.valueOf(e.getValue())));
         var future = retriever.retrieveConfig(
-                Retriever.Protocol.TFTP,
+                Protocol.TFTP,
                 script,
                 user,
                 password,

@@ -44,7 +44,9 @@ import java.util.concurrent.CompletableFuture;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.opennms.features.deviceconfig.retrieval.api.Retriever;
+import org.opennms.features.deviceconfig.retrieval.Failure;
+import org.opennms.features.deviceconfig.retrieval.Retriever;
+import org.opennms.features.deviceconfig.retrieval.Success;
 import org.opennms.netmgt.poller.MonitoredService;
 import org.opennms.netmgt.poller.PollStatus;
 
@@ -76,7 +78,7 @@ public class DeviceConfigMonitorTest {
         var config = new byte[] {1, 2, 3};
 
         when(retriever.retrieveConfig(any(), any(), any(), any(), any(), anyInt(), any(), any(), any())).thenReturn(
-                CompletableFuture.completedFuture(Either.right(new Retriever.Success(config)))
+                CompletableFuture.completedFuture(Either.right(new Success(config)))
         );
 
         var pollStatus = deviceConfigMonitor.poll(svc, params);
@@ -95,7 +97,7 @@ public class DeviceConfigMonitorTest {
         var retrievalFailure = "retrieval failure";
 
         when(retriever.retrieveConfig(any(), any(), any(), any(), any(), anyInt(), any(), any(), any())).thenReturn(
-                CompletableFuture.completedFuture(Either.left(new Retriever.Failure(retrievalFailure)))
+                CompletableFuture.completedFuture(Either.left(new Failure(retrievalFailure)))
         );
 
         var pollStatus = deviceConfigMonitor.poll(svc, params);

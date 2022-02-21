@@ -704,7 +704,7 @@
     </dependency>
     <dependency>
       <groupId>org.opennms.features.device-config</groupId>
-      <artifactId>org.opennms.features.device-config.retrieval</artifactId>
+      <artifactId>org.opennms.features.device-config.retriever</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
       <scope>provided</scope>

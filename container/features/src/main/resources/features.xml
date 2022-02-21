@@ -1880,6 +1880,7 @@
         <feature>commons-net</feature>
         <feature>opennms-util</feature>
         <bundle dependency="true">mvn:org.opennms.core/org.opennms.core.lib/${project.version}</bundle>
+        <bundle>mvn:org.opennms.features.device-config/org.opennms.features.device-config.api/${project.version}</bundle>
     </feature>
 
     <feature name="opennms-deviceconfig-tftp" description="OpenNMS :: Features :: Device Config :: TFTP">
@@ -1891,7 +1892,7 @@
     <feature name="opennms-deviceconfig-monitor" description="OpenNMS :: Features :: Device Config :: Monitor">
         <feature>opennms-deviceconfig-tftp</feature>
         <bundle>mvn:org.opennms.features.device-config/org.opennms.features.device-config.ssh-scripting/${project.version}</bundle>
-        <bundle>mvn:org.opennms.features.device-config/org.opennms.features.device-config.retrieval/${project.version}</bundle>
+        <bundle>mvn:org.opennms.features.device-config/org.opennms.features.device-config.retriever/${project.version}</bundle>
         <bundle>mvn:org.opennms.features.device-config/org.opennms.features.device-config.monitor/${project.version}</bundle>
     </feature>
 

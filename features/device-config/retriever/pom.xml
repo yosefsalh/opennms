@@ -10,9 +10,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opennms.features.device-config</groupId>
-    <artifactId>org.opennms.features.device-config.monitor</artifactId>
+    <artifactId>org.opennms.features.device-config.retriever</artifactId>
+    <name>OpenNMS :: Features :: Device Config :: Retriever</name>
     <packaging>bundle</packaging>
-    <name>OpenNMS :: Features :: Device Config :: Monitor</name>
+
     <build>
         <plugins>
             <plugin>
@@ -29,10 +30,16 @@
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
-            <groupId>org.opennms.features.poller</groupId>
-            <artifactId>org.opennms.features.poller.api</artifactId>
+            <groupId>org.opennms.features.device-config</groupId>
+            <artifactId>org.opennms.features.device-config.tftp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opennms.features.device-config</groupId>
+            <artifactId>org.opennms.features.device-config.ssh-scripting</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -41,14 +48,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.opennms.core</groupId>
-            <artifactId>org.opennms.core.spring</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <scope>test</scope>
+            <groupId>org.opennms</groupId>
+            <artifactId>opennms-util</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -56,16 +62,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.sshd</groupId>
-            <artifactId>sshd-core</artifactId>
-            <version>${minaSshdVersion}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
         </dependency>
     </dependencies>
+
 </project>

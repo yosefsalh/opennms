@@ -10,9 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opennms.features.device-config</groupId>
-    <artifactId>org.opennms.features.device-config.service</artifactId>
+    <artifactId>org.opennms.features.device-config.api</artifactId>
     <packaging>bundle</packaging>
-    <name>OpenNMS :: Features :: Device Config :: Service</name>
+
     <build>
         <plugins>
             <plugin>
@@ -29,31 +29,11 @@
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
-            <groupId>org.opennms.features.poller</groupId>
-            <artifactId>org.opennms.features.poller.api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.opennms.features.device-config.persistence</groupId>
-            <artifactId>org.opennms.features.device-config.persistence.api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.opennms</groupId>
-            <artifactId>opennms-dao-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.opennms</groupId>
-            <artifactId>opennms-config</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.opennms.features.device-config</groupId>
-            <artifactId>org.opennms.features.device-config.api</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
         </dependency>
     </dependencies>
 </project>

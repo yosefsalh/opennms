@@ -19,12 +19,13 @@
         <module>monitor-adaptor</module>
         <module>persistence</module>
         <module>rest</module>
-        <module>retrieval</module>
         <module>tftp</module>
         <module>shell</module>
         <module>sink</module>
         <module>ssh-scripting</module>
         <module>service</module>
+        <module>api</module>
+        <module>retriever</module>
     </modules>
 
 </project>
