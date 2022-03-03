@@ -98,4 +98,10 @@ public interface DeviceConfigRestService {
     @POST
     @Path("/download")
     Response downloadDeviceConfigs();
+
+
+    @Path("/backup")
+    Response triggerDeviceConfigBackup(@QueryParam("ipAddress") String ipAddress,
+                                       @QueryParam("location") @DefaultValue("Default") String location,
+                                       @QueryParam("configType") @DefaultValue("default") String configType);
 }
