@@ -49,7 +49,7 @@ done
 # Configure the heap for the Maven JVM - the tests themselves are forked out in separate JVMs
 # The heap size should be sufficient to buffer the output (stdout/stderr) from the test
 export MAVEN_OPTS="-Xmx1g -Xms1g"
-
+ulimit -n 20480
 cd ~/project/smoke-test
 if [ $SUITE = "minimal" ]; then
   echo "#### Executing minimal set smoke/system tests"

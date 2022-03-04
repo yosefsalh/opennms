@@ -47,6 +47,7 @@ import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.features.deviceconfig.persistence.api.ConfigType;
 import org.opennms.features.deviceconfig.persistence.api.DeviceConfig;
 import org.opennms.features.deviceconfig.persistence.api.DeviceConfigDao;
+import org.opennms.features.deviceconfig.rest.BackupRequestDTO;
 import org.opennms.features.deviceconfig.rest.api.DeviceConfigDTO;
 import org.opennms.features.deviceconfig.rest.api.DeviceConfigRestService;
 import org.opennms.features.deviceconfig.service.DeviceConfigService;
@@ -230,11 +231,13 @@ public class DefaultDeviceConfigRestService implements DeviceConfigRestService {
     }
 
     @Override
-    public Response triggerDeviceConfigBackup(String ipAddress, String location, String configType) {
+    public Response triggerDeviceConfigBackup(BackupRequestDTO backupRequestDTO) {
         try {
-            deviceConfigService.triggerConfigBackup(ipAddress, location, configType);
-        } catch (IOException e) {
-            LOG.error("Unable to trigger config backup for {} at location {} with configType {}", ipAddress, location, configType);
+            deviceConfigService.triggerConfigBackup(backupRequestDTO.getIpAddress(),
+                    backupRequestDTO.getLocation(), backupRequestDTO.getConfigType());
+        } catch (Exception e) {
+            LOG.error("Unable to trigger config backup for {} at location {} with configType {}",
+                    backupRequestDTO.getIpAddress(), backupRequestDTO.getLocation(), backupRequestDTO.getConfigType());
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
         return Response.accepted().build();

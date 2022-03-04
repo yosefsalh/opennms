@@ -43,6 +43,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Assert;
@@ -54,6 +55,7 @@ import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
 import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
 import org.opennms.features.deviceconfig.persistence.api.DeviceConfig;
 import org.opennms.features.deviceconfig.persistence.api.DeviceConfigDao;
+import org.opennms.features.deviceconfig.rest.BackupRequestDTO;
 import org.opennms.features.deviceconfig.rest.api.DeviceConfigDTO;
 import org.opennms.features.deviceconfig.rest.api.DeviceConfigRestService;
 import org.opennms.features.deviceconfig.service.DeviceConfigService;
@@ -261,11 +263,18 @@ public class DefaultDeviceConfigRestServiceIT {
         Mockito.doThrow(new IllegalArgumentException(message)).when(deviceConfigService).triggerConfigBackup(Mockito.eq(invalidIpAddress),
                 Mockito.anyString(), Mockito.anyString());
 
-        Response response = deviceConfigRestService.triggerDeviceConfigBackup(ipAddress, "MINION", "default");
-        assertThat(response.getStatusInfo(), Matchers.is(Response.Status.ACCEPTED));
+        var dto = new BackupRequestDTO(ipAddress, "MINION", "default");
+        Response response = deviceConfigRestService.triggerDeviceConfigBackup(dto);
+        assertThat(response.getStatusInfo().toEnum(), Matchers.is(Response.Status.ACCEPTED));
 
-        response = deviceConfigRestService.triggerDeviceConfigBackup(invalidIpAddress, "MINION", "default");
-        assertThat(response.getStatusInfo(), Matchers.is(Response.Status.ACCEPTED));
+        dto = new BackupRequestDTO(invalidIpAddress, "MINION", "default");
+        response = deviceConfigRestService.triggerDeviceConfigBackup(dto);
+        assertThat(response.getEntity(), Matchers.is(message));
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(dto);
+        System.out.println(json);
+
     }
 
     private OnmsIpInterface populateIpInterfaceAndGet(int num) {

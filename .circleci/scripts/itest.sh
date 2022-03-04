@@ -82,7 +82,7 @@ sudo apt update && \
                 jicmp6 \
             || exit 1
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-
+ulimit -n 20480
 echo "#### Building Assembly Dependencies"
 ./compile.pl install -P'!checkstyle' \
            -Pbuild-bamboo \
