@@ -15,7 +15,7 @@
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
 				<version>${cxfVersion}</version>
-                                <dependencies>
+<!--                                <dependencies>
                                    <dependency>
                                       <groupId>com.sun.xml.bind</groupId>
                                       <artifactId>jaxb-impl</artifactId>
@@ -26,7 +26,7 @@
                                       <artifactId>jaxb-xjc</artifactId>
                                       <version>2.2.11</version>
                                    </dependency>
-                                </dependencies>
+                                </dependencies>-->
 				<executions>
 					<execution>
 						<id>generate-sources</id>
