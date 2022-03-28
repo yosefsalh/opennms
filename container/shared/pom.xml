@@ -86,7 +86,7 @@
                         <feature>scv</feature>
 
                         <!-- OPENNMS: Additional tools -->
-                        <feature>hawtio-offline</feature>
+                        <feature>hawtio</feature>
                         <feature>jolokia</feature>
                     </bootFeatures>
                     <blacklistedFeatures>
