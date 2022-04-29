@@ -34,7 +34,14 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.opennms.core.ipc.sink.api.AsyncDispatcher;
 import org.opennms.core.ipc.sink.api.MessageDispatcherFactory;
 import org.opennms.core.ipc.twin.api.TwinSubscriber;
@@ -49,6 +56,8 @@ import org.opennms.netmgt.snmp.SnmpUtils;
 import org.opennms.netmgt.snmp.TrapInformation;
 import org.opennms.netmgt.snmp.TrapListenerConfig;
 import org.opennms.netmgt.snmp.TrapNotificationListener;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +81,13 @@ public class TrapListener implements TrapNotificationListener {
     private TwinSubscriber m_twinSubscriber;
 
     private Closeable m_twinSubscription;
+
+    private BundleContext bundleContext;
+
+    private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
+            .setNameFormat("twin-subscriber-check-scheduler-%d")
+            .build();
+    private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor(threadFactory);
 
     public TrapListener(final TrapdConfig config) throws SocketException {
         Objects.requireNonNull(config, "Config cannot be null");
@@ -102,13 +118,60 @@ public class TrapListener implements TrapNotificationListener {
     }
 
     public void start() {
-        m_twinSubscription = m_twinSubscriber.subscribe(TrapListenerConfig.TWIN_KEY, TrapListenerConfig.class, (config) ->  {
+        if (bundleContext != null) {
+            ServiceReference<TwinSubscriber> serviceReference = bundleContext.getServiceReference(TwinSubscriber.class);
+            if (serviceReference != null) {
+                m_twinSubscriber = bundleContext.getService(serviceReference);
+            }
+            // Twin subscriber not initialized yet, open trap listener anyways
+            if (m_twinSubscriber == null) {
+                this.open(new TrapListenerConfig());
+                // Try checking for Twin Subscriber every 30 secs.
+                scheduleTwinSubscriberCheck();
+            } else {
+                subscribe();
+            }
+        } else  {
+            // OpenNMS instance has no bundle context.
+            subscribe();
+        }
+    }
+
+    private void subscribe() {
+        m_twinSubscription = m_twinSubscriber.subscribe(TrapListenerConfig.TWIN_KEY, TrapListenerConfig.class, (config) -> {
             try (Logging.MDCCloseable mdc = Logging.withPrefixCloseable(Trapd.LOG4J_CATEGORY)) {
                 LOG.info("Got listener config update - reloading");
                 this.close();
                 this.open(config);
             }
         });
+    }
+
+    private boolean scheduleTwinSubscriberCheck() {
+        ScheduledFuture<Boolean> future = scheduledExecutor.schedule(this::checkForTwinAndSubscribe, 30, TimeUnit.SECONDS);
+        try {
+            boolean succeeded = future.get();
+            if (succeeded) {
+                return true;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            LOG.warn("Exception while retrieving twin subscriber", e);
+        }
+        return scheduleTwinSubscriberCheck();
+    }
+
+    private boolean checkForTwinAndSubscribe() {
+        if (bundleContext != null) {
+            ServiceReference<TwinSubscriber> serviceReference = bundleContext.getServiceReference(TwinSubscriber.class);
+            if (serviceReference != null) {
+                m_twinSubscriber = bundleContext.getService(serviceReference);
+            }
+            if (m_twinSubscriber != null) {
+                subscribe();
+                return true;
+            }
+        }
+        return false;
     }
 
     private void open(final TrapListenerConfig config) {
@@ -154,6 +217,7 @@ public class TrapListener implements TrapNotificationListener {
         } catch (final Exception e) {
             LOG.warn("stop: exception occurred closing m_dispatcher", e);
         }
+        scheduledExecutor.shutdown();
     }
 
     private void close() {
@@ -188,12 +252,12 @@ public class TrapListener implements TrapNotificationListener {
         m_distPollerDao = Objects.requireNonNull(distPollerDao);
     }
 
-    public TwinSubscriber getTwinSubscriber() {
-        return this.m_twinSubscriber;
+    public BundleContext getBundleContext() {
+        return bundleContext;
     }
 
-    public void setTwinSubscriber(final TwinSubscriber twinSubscriber) {
-        this.m_twinSubscriber = Objects.requireNonNull(twinSubscriber);
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 
     private void restartWithNewConfig(final TrapdConfigBean newConfig) {
