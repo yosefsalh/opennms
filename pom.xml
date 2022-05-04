@@ -479,6 +479,11 @@
       </plugin>
       -->
       <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>${karafMavenPluginVersion}</version>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-install-plugin</artifactId>
         <version>${maven.install.plugin.version}</version>
@@ -1626,7 +1631,7 @@
     <maven.clover.licenseLocation>${user.home}/.m2/clover.license</maven.clover.licenseLocation>
 
     <karaf.servicemix.specs.version>2.9.0</karaf.servicemix.specs.version>
-    <hawtio.version>2.14.5</hawtio.version>
+    <hawtio.version>2.17.2</hawtio.version>
 
     <!-- dependency versions -->
     <args4jVersion>2.32</args4jVersion>
@@ -1642,7 +1647,7 @@
     <bsfVersion>2.4.0</bsfVersion>
     <bsonVersion>3.5.0</bsonVersion>
     <caffeineVersion>2.8.0</caffeineVersion>
-    <camelVersion>2.19.1</camelVersion>
+    <camelVersion>2.20.4</camelVersion>
     <cassandraUnitVersion>3.11.2.0</cassandraUnitVersion>
     <!-- Match Newts version -->
     <cassandraVersion>3.5.0</cassandraVersion>
@@ -1720,6 +1725,7 @@
     <jsonlibVersion>2.4</jsonlibVersion>
     <jsonlibBundleVersion>2.4_1</jsonlibBundleVersion>
     <karafVersion>4.2.6</karafVersion>
+    <karafMavenPluginVersion>4.4.3</karafMavenPluginVersion>
     <kafkaBundleVersion>2.4.0_1</kafkaBundleVersion>
     <kafkaVersion>2.4.0</kafkaVersion>
     <liquibaseVersion>3.6.3</liquibaseVersion>
@@ -1733,6 +1739,7 @@
     <mockitoVersion>3.4.6</mockitoVersion>
     <netty4Version>4.1.48.Final</netty4Version>
     <newtsVersion>1.5.5</newtsVersion>
+    <paxCdiVersion>1.1.4</paxCdiVersion>
     <paxExamVersion>4.13.1</paxExamVersion>
     <paxLoggingVersion>1.11.13</paxLoggingVersion>
     <paxSwissboxVersion>1.8.2</paxSwissboxVersion>

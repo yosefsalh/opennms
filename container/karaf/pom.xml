@@ -37,7 +37,6 @@
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
-                <version>${karafVersion}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <blacklistedRepositories>
@@ -48,6 +47,7 @@
                         <!-- OPENNMS: Replace the standard and spring-legacy features files with our modified versions -->
                         <repository>mvn:org.opennms.karaf/opennms/${project.version}/xml/standard</repository>
                         <repository>mvn:org.opennms.karaf/opennms/${project.version}/xml/spring-legacy</repository>
+                        <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${paxCdiVersion}/xml/features</repository>
                         <!-- OPENNMS: Add the OpenNMS feature repository -->
                         <repository>mvn:org.opennms.karaf/opennms/${project.version}/xml/features</repository>
                         <!-- OPENNMS: Add the OpenNMS Karaf extensions feature repository -->

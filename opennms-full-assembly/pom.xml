@@ -185,8 +185,6 @@
       <plugin>
         <groupId>org.apache.karaf.tooling</groupId>
         <artifactId>karaf-maven-plugin</artifactId>
-        <version>${karafVersion}</version>
-
         <executions>
           <execution>
             <id>features-add-to-repository</id>
@@ -207,6 +205,8 @@
                 <!-- <descriptor>mvn:org.apache.karaf.features/standard/${karafVersion}/xml/features</descriptor> -->
                 <!-- <descriptor>mvn:org.apache.karaf.features/spring/${karafVersion}/xml/features</descriptor> -->
                 <!-- <descriptor>mvn:org.apache.karaf.features/spring-legacy/${karafVersion}/xml/features</descriptor> -->
+                <!-- Pax CDI features -->
+                <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${paxCdiVersion}/xml/features</repository>
                 <!-- Pax Exam features -->
                 <descriptor>mvn:org.ops4j.pax.exam/pax-exam-features/${paxExamVersion}/xml</descriptor>
                 <!-- Pax Web features -->

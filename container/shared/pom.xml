@@ -38,7 +38,6 @@
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
-                <version>${karafVersion}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <blacklistedRepositories>
@@ -49,6 +48,8 @@
                         <!-- OPENNMS: Add the OpenNMS Karaf extensions feature repository -->
                         <repository>mvn:org.opennms.karaf/opennms/${project.version}/xml/karaf-extensions</repository>
                         <repository>mvn:io.hawt/hawtio-karaf/${hawtio.version}/xml/features</repository>
+                        <!-- OPENNMS: get a good version of pax-cdi-features for inclusion -->
+                        <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${paxCdiVersion}/xml/features</repository>
                     </bootRepositories>
                     <!-- use this instead of bootRepositories when we move to karaf-maven-plugin 4.2.x or higher -->
                     <!-- <descriptors>

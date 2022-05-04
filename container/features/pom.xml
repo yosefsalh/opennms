@@ -34,6 +34,55 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-camel-feature</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.camel.karaf</groupId>
+                  <artifactId>apache-camel</artifactId>
+                  <version>${camelVersion}</version>
+                  <classifier>features</classifier>
+                  <type>xml</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/downloaded-features</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+        <version>1.5.3</version>
+        <executions>
+          <execution>
+            <id>exec</id>
+            <phase>package</phase>
+            <goals>
+              <goal>replace</goal>
+            </goals>
+            <configuration>
+              <file>${project.build.directory}/downloaded-features/apache-camel-${camelVersion}-features.xml</file>
+              <replacements>
+                <replacement>
+                  <token>apache-cxf/3.2.1</token>
+                  <value>apache-cxf/${cxfVersion}</value>
+                </replacement>
+              </replacements>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -79,6 +128,11 @@
                   <file>${project.build.outputDirectory}/features.xml</file>
                   <type>xml</type>
                   <classifier>features</classifier>
+                </artifact>
+                <artifact>
+                  <file>${project.build.directory}/downloaded-features/apache-camel-${camelVersion}-features.xml</file>
+                  <type>xml</type>
+                  <classifier>camel</classifier>
                 </artifact>
               </artifacts>
             </configuration>
