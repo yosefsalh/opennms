@@ -28,39 +28,30 @@
 
 package org.opennms.features.deviceconfig.monitor.adaptor;
 
-import com.google.common.base.Strings;
-import org.opennms.core.utils.InetAddressUtils;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Map;
+
 import org.opennms.features.deviceconfig.persistence.api.ConfigType;
-import org.opennms.features.deviceconfig.persistence.api.DeviceConfig;
 import org.opennms.features.deviceconfig.persistence.api.DeviceConfigDao;
 import org.opennms.features.deviceconfig.persistence.api.DeviceConfigStatus;
 import org.opennms.features.deviceconfig.service.DeviceConfigUtil;
 import org.opennms.netmgt.dao.api.IpInterfaceDao;
-import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.events.api.EventConstants;
 import org.opennms.netmgt.events.api.EventForwarder;
-import org.opennms.netmgt.events.api.annotations.EventHandler;
-import org.opennms.netmgt.events.api.annotations.EventListener;
-import org.opennms.netmgt.events.api.model.IEvent;
 import org.opennms.netmgt.model.OnmsIpInterface;
-import org.opennms.netmgt.model.OnmsNode;
 import org.opennms.netmgt.model.events.EventBuilder;
+import org.opennms.netmgt.poller.DeviceConfig;
 import org.opennms.netmgt.poller.MonitoredService;
 import org.opennms.netmgt.poller.PollStatus;
 import org.opennms.netmgt.poller.ServiceMonitorAdaptor;
-import org.opennms.netmgt.xml.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Strings;
 
-@EventListener(name="OpenNMS.DeviceConfigMonitor", logPrefix="poller")
+
 public class DeviceConfigMonitorAdaptor implements ServiceMonitorAdaptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceConfigMonitorAdaptor.class);
@@ -74,9 +65,6 @@ public class DeviceConfigMonitorAdaptor implements ServiceMonitorAdaptor {
 
     @Autowired
     private EventForwarder eventForwarder;
-
-    @Autowired
-    private NodeDao nodeDao;
 
     @Override
     public PollStatus handlePollResult(MonitoredService svc, Map<String, Object> parameters, PollStatus status) {
@@ -142,55 +130,6 @@ public class DeviceConfigMonitorAdaptor implements ServiceMonitorAdaptor {
         }
 
         return status;
-    }
-
-    @EventHandler(uei = EventConstants.INTERFACE_DELETED_EVENT_UEI)
-    @Transactional
-    public void handleInterfaceDeletedEvent(IEvent event) {
-        LOG.debug("Received event: {}", event.getUei());
-        Long nodeId = event.getNodeid();
-        if (nodeId == null) {
-            LOG.error(EventConstants.INTERFACE_DELETED_EVENT_UEI + ": Event with no node ID: " + event);
-            return;
-        }
-        OnmsNode node = nodeDao.get(nodeId.intValue());
-        if (node == null) {
-            LOG.warn(EventConstants.INTERFACE_DELETED_EVENT_UEI + ": Node with Id {} was already deleted", nodeId);
-            return;
-        }
-        InetAddress ipAddress = event.getInterfaceAddress();
-        if (ipAddress == null) {
-            LOG.error(EventConstants.INTERFACE_DELETED_EVENT_UEI + ": Event with no Interface Address : " + event);
-            return;
-        }
-        OnmsIpInterface ipInterface = ipInterfaceDao.findByNodeIdAndIpAddress(nodeId.intValue(), InetAddressUtils.str(ipAddress));
-
-        List<DeviceConfig> deviceConfigList = deviceConfigDao.getAllDeviceConfigsForAnInterface(ipInterface);
-
-        deviceConfigList.forEach(dc -> deviceConfigDao.delete(dc));
-    }
-
-    @EventHandler(uei = EventConstants.NODE_DELETED_EVENT_UEI)
-    @Transactional
-    public void handleNodeDeletedEvent(Event event) {
-        LOG.debug("Received event: {}", event.getUei());
-        Long nodeId = event.getNodeid();
-        if (nodeId == null) {
-            LOG.error(EventConstants.INTERFACE_DELETED_EVENT_UEI + ": Event with no node ID: " + event);
-            return;
-        }
-        OnmsNode node = nodeDao.get(nodeId.intValue());
-        if (node == null) {
-            LOG.warn(EventConstants.INTERFACE_DELETED_EVENT_UEI + ": Node with Id {} was already deleted", nodeId);
-            return;
-        }
-        var ipInterfaces = ipInterfaceDao.findByNodeId(nodeId.intValue());
-
-        ipInterfaces.forEach(ipInterface -> {
-            List<DeviceConfig> deviceConfigList = deviceConfigDao.getAllDeviceConfigsForAnInterface(ipInterface);
-
-            deviceConfigList.forEach(dc -> deviceConfigDao.delete(dc));
-        });
     }
 
     public void setDeviceConfigDao(DeviceConfigDao deviceConfigDao) {

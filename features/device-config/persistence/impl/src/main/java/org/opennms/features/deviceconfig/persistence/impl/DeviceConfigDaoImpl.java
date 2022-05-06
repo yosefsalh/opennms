@@ -28,6 +28,15 @@
 
 package org.opennms.features.deviceconfig.persistence.impl;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Strings;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.ResultTransformer;
@@ -41,17 +50,7 @@ import org.opennms.netmgt.model.OnmsNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 public class DeviceConfigDaoImpl extends AbstractDaoHibernate<DeviceConfig, Long> implements DeviceConfigDao {
-
     private static final Map<String,String> ORDERBY_QUERY_PROPERTY_MAP = Map.of(
         "lastupdated", "last_updated",
         "devicename", "nodelabel",
@@ -207,12 +206,6 @@ public class DeviceConfigDaoImpl extends AbstractDaoHibernate<DeviceConfig, Long
             : this.queryInt(hql);
 
         return count;
-    }
-
-    @Override
-    public List<DeviceConfig> getAllDeviceConfigsForAnInterface(OnmsIpInterface ipInterface) {
-        return find("from DeviceConfig dc where dc.lastUpdated is not null AND dc.ipInterface.id = ? ORDER BY lastUpdated DESC",
-                ipInterface.getId());
     }
 
     private DeviceConfigQueryCriteria createSqlQueryCriteria(Integer limit, Integer offset,
