@@ -41,11 +41,12 @@ import org.opennms.features.deviceconfig.persistence.api.DeviceConfig;
 import org.opennms.features.deviceconfig.persistence.api.DeviceConfigDao;
 import org.opennms.netmgt.dao.api.NodeDao;
 import org.opennms.netmgt.dao.api.ServiceTypeDao;
+import org.opennms.netmgt.events.api.EventIpcManager;
 import org.opennms.netmgt.model.NetworkBuilder;
 import org.opennms.netmgt.model.OnmsIpInterface;
 import org.opennms.netmgt.model.OnmsNode;
+import org.opennms.netmgt.model.events.EventUtils;
 import org.opennms.netmgt.poller.MonitoredService;
-import org.opennms.netmgt.poller.Poll;
 import org.opennms.netmgt.poller.PollStatus;
 import org.opennms.netmgt.poller.ServiceMonitorAdaptor;
 import org.opennms.test.JUnitConfigurationEnvironment;
@@ -56,6 +57,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -66,7 +68,9 @@ import java.util.Optional;
         "classpath:/META-INF/opennms/applicationContext-soa.xml",
         "classpath:/META-INF/opennms/applicationContext-dao.xml",
         "classpath:/META-INF/opennms/mockEventIpcManager.xml",
-        "classpath*:/META-INF/opennms/component-dao.xml"})
+        "classpath*:/META-INF/opennms/component-dao.xml",
+        "classpath:/META-INF/opennms/applicationContext-daemon.xml",
+        "classpath:/META-INF/opennms/applicationContext-deviceConfig-MonitorAdaptor.xml"})
 @JUnitConfigurationEnvironment
 @JUnitTemporaryDatabase(reuseDatabase = false)
 public class DeviceConfigMonitorAdaptorIT {
@@ -83,6 +87,9 @@ public class DeviceConfigMonitorAdaptorIT {
     @Autowired
     @Qualifier(value = "deviceConfigMonitorAdaptor")
     private ServiceMonitorAdaptor deviceConfigAdaptor;
+
+    @Autowired
+    private EventIpcManager eventIpcManager;
 
     private OnmsIpInterface ipInterface;
     private OnmsNode node;
@@ -213,6 +220,12 @@ public class DeviceConfigMonitorAdaptorIT {
         Assert.assertArrayEquals(configOnSunday.get().getConfig(), configOnThursday.get().getConfig());
         Assert.assertEquals(configOnSunday.get().getLastUpdated(), configOnSunday.get().getLastSucceeded());
         Assert.assertNotEquals(configOnSunday.get().getLastUpdated(), configOnSunday.get().getCreatedTime());
+
+        eventIpcManager.sendNowSync(EventUtils.createInterfaceDeletedEvent("dcb-test", node.getId(), ipInterface.getIpAddress(),ipInterface.getId()));
+        List<DeviceConfig> allConfigs = deviceConfigDao.getAllDeviceConfigsWithAnInterfaceId(ipInterface.getId());
+        // Verify that they got deleted
+        Assert.assertTrue(allConfigs.isEmpty());
+
     }
 
     @Test

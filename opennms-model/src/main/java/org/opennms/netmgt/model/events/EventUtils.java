@@ -28,39 +28,6 @@
 
 package org.opennms.netmgt.model.events;
 
-import static org.opennms.core.utils.InetAddressUtils.addr;
-import static org.opennms.core.utils.InetAddressUtils.str;
-import static org.opennms.netmgt.events.api.EventConstants.APPLICATION_DELETED_EVENT_UEI;
-import static org.opennms.netmgt.events.api.EventConstants.INTERFACE_DELETED_EVENT_UEI;
-import static org.opennms.netmgt.events.api.EventConstants.NODE_ADDED_EVENT_UEI;
-import static org.opennms.netmgt.events.api.EventConstants.NODE_CATEGORY_MEMBERSHIP_CHANGED_EVENT_UEI;
-import static org.opennms.netmgt.events.api.EventConstants.NODE_DELETED_EVENT_UEI;
-import static org.opennms.netmgt.events.api.EventConstants.NODE_GAINED_INTERFACE_EVENT_UEI;
-import static org.opennms.netmgt.events.api.EventConstants.NODE_GAINED_SERVICE_EVENT_UEI;
-import static org.opennms.netmgt.events.api.EventConstants.NODE_LOCATION_CHANGED_EVENT_UEI;
-import static org.opennms.netmgt.events.api.EventConstants.NODE_UPDATED_EVENT_UEI;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_APPLICATION_ID;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_APPLICATION_NAME;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_FOREIGN_ID;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_FOREIGN_SOURCE;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_INTERFACE;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_IP_HOSTNAME;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_LOCATION;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_CURRENT_LOCATION;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_LABEL;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_LABEL_SOURCE;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_PREV_LOCATION;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_SYSDESCRIPTION;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_SYSNAME;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_RESCAN_EXISTING;
-import static org.opennms.netmgt.events.api.EventConstants.PARM_MONITOR_KEY;
-import static org.opennms.netmgt.events.api.EventConstants.SERVICE_DELETED_EVENT_UEI;
-import java.net.InetAddress;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Objects;
-
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.core.utils.InsufficientInformationException;
 import org.opennms.core.utils.WebSecurityUtils;
@@ -81,6 +48,41 @@ import org.opennms.netmgt.xml.event.Snmp;
 import org.opennms.netmgt.xml.event.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Objects;
+
+import static org.opennms.core.utils.InetAddressUtils.addr;
+import static org.opennms.core.utils.InetAddressUtils.str;
+import static org.opennms.netmgt.events.api.EventConstants.APPLICATION_DELETED_EVENT_UEI;
+import static org.opennms.netmgt.events.api.EventConstants.INTERFACE_DELETED_EVENT_UEI;
+import static org.opennms.netmgt.events.api.EventConstants.NODE_ADDED_EVENT_UEI;
+import static org.opennms.netmgt.events.api.EventConstants.NODE_CATEGORY_MEMBERSHIP_CHANGED_EVENT_UEI;
+import static org.opennms.netmgt.events.api.EventConstants.NODE_DELETED_EVENT_UEI;
+import static org.opennms.netmgt.events.api.EventConstants.NODE_GAINED_INTERFACE_EVENT_UEI;
+import static org.opennms.netmgt.events.api.EventConstants.NODE_GAINED_SERVICE_EVENT_UEI;
+import static org.opennms.netmgt.events.api.EventConstants.NODE_LOCATION_CHANGED_EVENT_UEI;
+import static org.opennms.netmgt.events.api.EventConstants.NODE_UPDATED_EVENT_UEI;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_APPLICATION_ID;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_APPLICATION_NAME;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_FOREIGN_ID;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_FOREIGN_SOURCE;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_INTERFACE;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_IPINTERFACE_ID;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_IP_HOSTNAME;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_LOCATION;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_MONITOR_KEY;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_CURRENT_LOCATION;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_LABEL;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_LABEL_SOURCE;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_PREV_LOCATION;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_SYSDESCRIPTION;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_NODE_SYSNAME;
+import static org.opennms.netmgt.events.api.EventConstants.PARM_RESCAN_EXISTING;
+import static org.opennms.netmgt.events.api.EventConstants.SERVICE_DELETED_EVENT_UEI;
 
 /**
  * <p>Abstract EventUtils class.</p>
@@ -226,21 +228,25 @@ public abstract class EventUtils {
     /**
      * Construct an interfaceDeleted event for an interface.
      *
+     * @param ipAddr
+     *            the ipAdddr of the event
      * @param source
      *            the source of the event
      * @param nodeId
      *            the nodeId of the node the interface resides in
-     * @param ipAddr
-     *            the ipAdddr of the event
+     * @param interfaceId
      * @return an Event represent an interfaceDeleted event for the given
      *         interface
      */
-    public static Event createInterfaceDeletedEvent(String source, int nodeId, InetAddress addr) {
+    public static Event createInterfaceDeletedEvent(String source, int nodeId, InetAddress addr, Integer interfaceId) {
         debug("createInterfaceDeletedEvent for nodeid/ipaddr:  %d/%s", nodeId, str(addr));
 
         EventBuilder bldr = new EventBuilder(INTERFACE_DELETED_EVENT_UEI, source);
         bldr.setNodeid(nodeId);
         bldr.setInterface(addr);
+        if(interfaceId != null) {
+            bldr.addParam(PARM_IPINTERFACE_ID, interfaceId);
+        }
         
         return bldr.getEvent();
     }
