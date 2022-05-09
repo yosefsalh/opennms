@@ -101,7 +101,7 @@ public class DeviceConfigMonitorAdaptorIT {
 
     @Autowired
     private SessionUtils sessionUtils;
-    
+
     @Autowired
     private EventIpcManager eventIpcManager;
 
