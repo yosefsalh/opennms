@@ -34,7 +34,7 @@
               <FeatherIcon :icon="ArrowDropDown" />
             </FeatherButton>
           </template>
-          <FeatherDropdownItem v-for="item in menuItem.items" :key="item.name || ''"
+          <FeatherDropdownItem :class="item.className" v-for="item in menuItem.items" :key="item.name || ''"
             @click="onMenuItemClick(item.url || '', item.isVueLink)">
             <div class="menubar-dropdown-item-content">
               <a :href="computeLink(item.url || '', item.isVueLink)" class="dropdown-menu-link">{{ item.name }}</a>
@@ -76,7 +76,9 @@
               <FeatherIcon :icon="ArrowDropDown" />
             </FeatherButton>
           </template>
-          <FeatherDropdownItem v-for="item in mainMenu.helpMenu.items" :key="item.name || ''"
+          <FeatherDropdownItem
+            v-for="item in mainMenu.helpMenu.items" :key="item.name || ''"
+            :class="item.className"
             @click="onMenuItemClick(item.url || '', item.isVueLink)">
             <div class="menubar-dropdown-item-content">
               <a :href="computeLink(item.url || '', item.isVueLink)" class="dropdown-menu-link">
@@ -106,7 +108,7 @@
               <FeatherIcon :icon="ArrowDropDown" />
             </FeatherButton>
           </template>
-          <FeatherDropdownItem v-for="item in mainMenu.selfServiceMenu.items" :key="item.name || ''"
+          <FeatherDropdownItem :class="item.className" v-for="item in mainMenu.selfServiceMenu.items" :key="item.name || ''"
             @click="onMenuItemClick(item.url || '', item.isVueLink)">
             <div class="menubar-dropdown-item-content">
               <a :href="computeLink(item.url || '', item.isVueLink)" class="dropdown-menu-link">
@@ -138,7 +140,7 @@
             </FeatherButton>
           </template>
 
-          <FeatherDropdownItem v-for="item in mainMenu.userNotificationMenu.items?.filter(i => i.id === 'user')"
+          <FeatherDropdownItem :class="item.className" v-for="item in mainMenu.userNotificationMenu.items?.filter(i => i.id === 'user')"
             :key="item.name || ''" @click="onMenuItemClick(item.url || '', item.isVueLink)">
             <div class="menubar-dropdown-item-content">
               <a :href="computeLink(item.url || '')" class="dropdown-menu-link dropdown-menu-wrapper">
@@ -189,7 +191,7 @@
             </div>
           </FeatherDropdownItem>
           <!-- Team and On-Call links -->
-          <FeatherDropdownItem v-for="item in mainMenu.userNotificationMenu.items?.filter(i => i.id !== 'user')"
+          <FeatherDropdownItem :class="item.className" v-for="item in mainMenu.userNotificationMenu.items?.filter(i => i.id !== 'user')"
             :key="item.name || ''" @click="onMenuItemClick(item.url || '', item.isVueLink)">
             <div class="menubar-dropdown-item-content">
               <a :href="computeLink(item.url || '')" class="dropdown-menu-link dropdown-menu-wrapper final-menu-wrapper">
