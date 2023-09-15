@@ -14,12 +14,10 @@
     <dependency>
       <groupId>org.jfree</groupId>
       <artifactId>jfreechart</artifactId>
-      <version>${jfreechartVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.jfree</groupId>
       <artifactId>jcommon</artifactId>
-      <version>${jcommonVersion}</version>
     </dependency>
   </dependencies>
 </project>

@@ -30,18 +30,18 @@ package org.opennms.web.charts;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 import org.jfree.chart.JFreeChart;
 import org.junit.After;
@@ -50,12 +50,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opennms.core.test.OpenNMSJUnit4ClassRunner;
 import org.opennms.core.test.db.annotations.JUnitTemporaryDatabase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.opennms.netmgt.config.ChartConfigFactory;
 import org.opennms.netmgt.config.charts.BarChart;
 import org.opennms.test.JUnitConfigurationEnvironment;
-import org.opennms.web.charts.ChartUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OpenNMSJUnit4ClassRunner.class)
@@ -71,8 +68,6 @@ import org.springframework.test.context.ContextConfiguration;
 @JUnitConfigurationEnvironment
 @JUnitTemporaryDatabase(dirtiesContext=false)
 public class ChartUtilsIT {
-    private static final Logger LOG = LoggerFactory.getLogger(ChartUtilsIT.class);
-    
     private static final String CHART_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
             "<tns:chart-configuration xmlns:tns=\"http://xmlns.opennms.org/xsd/config/charts\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://xmlns.opennms.org/xsd/config/charts ../src/services/org/opennms/netmgt/config/chart-configuration.xsd \">\n" + 
             "\n" + 
@@ -147,7 +142,7 @@ public class ChartUtilsIT {
     @Before
     public void setUp() throws Exception {
         System.setProperty("java.awt.headless", "true");
-        initalizeChartFactory();
+        initializeChartFactory(CHART_CONFIG);
     }
 
     @After
@@ -156,29 +151,28 @@ public class ChartUtilsIT {
 
     @Test
     public void testGetBarChartConfig() throws Exception {
+        assertNotNull("sample bar chart should not be null", ChartUtils.getBarChartConfigByName("sample-bar-chart"));
+        assertEquals("sample bar chart config should be a BarChart class", ChartUtils.getBarChartConfigByName("sample-bar-chart").getClass(), BarChart.class);
+    }
 
-        assertNotNull(ChartUtils.getBarChartConfigByName("sample-bar-chart"));
-        assertTrue(ChartUtils.getBarChartConfigByName("sample-bar-chart").getClass() == BarChart.class);
+    @Test
+    public void testGetBarChartAsPNGByteArray() throws Exception {
+        final byte[] png = ChartUtils.getBarChartAsPNGByteArray("sample-bar-chart");
+        assertNotNull("sample bar chart png should not be null", png);
+        assertTrue("sample bar chart png should not be empty", png.length > 0);
     }
 
     @Test
     public void testGetBarChart() throws Exception {
         JFreeChart barChart = ChartUtils.getBarChart("sample-bar-chart");
-        assertNotNull(barChart);
+        assertNotNull("sample bar chart should not be null", barChart);
         //SubTitle count includes "LegendTitle"
-        assertEquals(2, barChart.getSubtitleCount());
+        assertEquals("sample chart should have the right number of sub-titles", 2, barChart.getSubtitleCount());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testGetChartWithInvalidChartName() throws Exception {
-
-        JFreeChart chart = null;
-        try {
-            chart = ChartUtils.getBarChart("opennms-rules!");
-        } catch (IllegalArgumentException e) {
-            LOG.debug("testGetChartWithInvalidChartName: Good, this test is working.");
-        }
-        assertNull(chart);
+        ChartUtils.getBarChart("opennms-rules!");
     }
 
     @Test
@@ -187,17 +181,39 @@ public class ChartUtilsIT {
         OutputStream stream = new FileOutputStream(tempFile);
         ChartUtils.getBarChart("sample-bar-chart", stream);
         stream.close();
+        assertTrue("file should not be empty", tempFile.length() > 0);
     }
 
     @Test
     public void testGetChartAsBufferedImage() throws Exception {
         BufferedImage bi = ChartUtils.getChartAsBufferedImage("sample-bar-chart");
-        assertEquals(300, bi.getHeight());
+        assertEquals("sample chart should be the correct height", 300, bi.getHeight());
     }
 
-    private static void initalizeChartFactory() throws IOException {
+    @Test
+    public void testShippedConfig() throws Exception {
+        final String opennmsHome = System.getProperty("opennms.home");
+        assertNotNull("we should get $OPENNMS_HOME", opennmsHome);
+        final String chartText = Files.readString(Paths.get(opennmsHome, "etc", "chart-configuration.xml"));
+        initializeChartFactory(chartText);
+
+        byte[] png = ChartUtils.getBarChartAsPNGByteArray("sample-bar-chart");
+        assertNotNull("bar chart png should not be null", png);
+        assertTrue("bar chart png should not be empty", png.length > 0);
+
+        png = ChartUtils.getBarChartAsPNGByteArray("sample-bar-chart2");
+        assertNotNull("bar chart png should not be null", png);
+        assertTrue("bar chart png should not be empty", png.length > 0);
+
+        png = ChartUtils.getBarChartAsPNGByteArray("sample-bar-chart3");
+        assertNotNull("bar chart png should not be null", png);
+        assertTrue("bar chart png should not be empty", png.length > 0);
+    }
+
+    private static void initializeChartFactory(final String chartText) throws IOException {
+        final String config = Objects.requireNonNull(chartText);
         ChartConfigFactory.setInstance(new ChartConfigFactory());
-        ByteArrayInputStream rdr = new ByteArrayInputStream(CHART_CONFIG.getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream rdr = new ByteArrayInputStream(config.getBytes(StandardCharsets.UTF_8));
         ChartConfigFactory.parseXml(rdr);
         rdr.close();        
         //        m_config = ChartConfigFactory.getInstance().getConfiguration();
