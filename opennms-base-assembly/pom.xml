@@ -182,8 +182,6 @@
           <dependency>
             <groupId>org.opennms.dependencies</groupId>
             <artifactId>jasper-dependencies</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
           </dependency>
           <dependency>
             <groupId>net.sf.jasperreports</groupId>

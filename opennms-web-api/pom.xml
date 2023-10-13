@@ -61,9 +61,8 @@
       <artifactId>org.opennms.features.reporting.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opennms.dependencies</groupId>
-      <artifactId>jfreechart-dependencies</artifactId>
-      <type>pom</type>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opennms.dependencies</groupId>
